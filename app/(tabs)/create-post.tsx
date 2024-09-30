@@ -3,6 +3,11 @@ import { useState, useRef } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImageManipulator from 'expo-image-manipulator';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Fontisto from '@expo/vector-icons/Fontisto';
+
+
+
 
 export default function createPost() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -67,11 +72,11 @@ export default function createPost() {
       
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-          <Text style={styles.text}>Flip Camera</Text>
+        <Fontisto name="spinner-refresh" size={24} color="white" />
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.button} onPress={takePhoto}>
-          <Text style={styles.text}>Take Photo</Text>
+        <MaterialIcons name="camera" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
@@ -88,14 +93,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+    padding: 0,
   },
   cameraContainer: {
-    width: 300,
-    height: 300,
+    width: '100%',
+    height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ccc',
+    marginTop: '20%',
     marginBottom: 20,
   },
   camera: {

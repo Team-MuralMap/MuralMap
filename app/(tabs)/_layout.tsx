@@ -27,18 +27,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="create-post"
-        options={{
-          title: "New Post",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "camera-plus" : "camera-plus-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
+      
       <Tabs.Screen
         name="photos"
         options={{
@@ -46,6 +35,18 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "images" : "images-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="create-post"
+        options={{
+          title: "New Post",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "camera-plus" : "camera-plus-outline"}
               color={color}
             />
           ),
