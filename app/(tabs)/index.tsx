@@ -9,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>This is the map</Text>
+      <Text>This the map</Text>
     </View>
   );
 }
