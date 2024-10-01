@@ -14,3 +14,10 @@ export const fetchPosts = async () => {
     .then(({ data }) => data)
     .catch(defaultCatch);
 };
+
+export const fetchUsers = async () => {
+  return apiClient
+    .get("users")
+    .then(({ data }) => data)
+    .catch(defaultCatch);
+};

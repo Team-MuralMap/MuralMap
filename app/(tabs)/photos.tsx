@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { fetchPosts } from "../../client/client.mjs";
+import { fetchPosts, fetchUsers } from "../../client/client.mjs";
 import Post from "@/components/Post";
 
 export default function Photos() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<any>([]);
   const [isPostsLoading, setIsPostsLoading] = useState(true);
 
+  const [users, setUsers] = useState<any>([]);
+  const [isUsersLoading, setIsUsersLoading] = useState(true);
+
   useEffect(() => {
+    setIsPostsLoading(true);
     fetchPosts().then(({ posts }) => {
-      console.log(posts[0]);
       setPosts(posts);
       setIsPostsLoading(false);
+    });
+
+    setIsUsersLoading(true);
+    fetchUsers().then(({ users }) => {
+      setUsers(users);
+      setIsUsersLoading(false);
     });
   }, []);
 
@@ -24,7 +33,7 @@ export default function Photos() {
       }}
     >
       <Text style={{ marginTop: 100 }}>Here are the posts:</Text>
-      {isPostsLoading ? (
+      {isPostsLoading || isUsersLoading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
@@ -34,7 +43,10 @@ export default function Photos() {
           }}
           data={posts}
           renderItem={({ item }) => {
-            return <Post post={item} />;
+            const author = users.find(
+              (user: any) => user.user_id === item.author_id
+            );
+            return <Post post={item} author={author} />;
           }}
         />
       )}
