@@ -1,16 +1,23 @@
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState, useRef } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native';
-import * as MediaLibrary from 'expo-media-library';
-import * as ImageManipulator from 'expo-image-manipulator';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import Fontisto from '@expo/vector-icons/Fontisto';
-
-
-
+import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { useState, useRef } from "react";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  ScrollView,
+} from "react-native";
+import * as MediaLibrary from "expo-media-library";
+import * as ImageManipulator from "expo-image-manipulator";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Fontisto from "@expo/vector-icons/Fontisto";
+import * as ImagePicker from "expo-image-picker";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function createPost() {
-  const [facing, setFacing] = useState<CameraType>('back');
+  const [facing, setFacing] = useState<CameraType>("back");
   const [photos, setPhotos] = useState<string[]>([]);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<any>(null);
@@ -22,14 +29,16 @@ export default function createPost() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Text style={styles.message}>
+          We need your permission to show the camera
+        </Text>
         <Button onPress={requestPermission} title="Grant permission" />
       </View>
     );
   }
 
   function toggleCameraFacing() {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
+    setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
   async function takePhoto() {
@@ -37,7 +46,7 @@ export default function createPost() {
       try {
         // Capture the photo and get its URI
         const photo = await cameraRef.current.takePictureAsync();
-        
+
         // Determine the size for cropping
         const { width, height } = photo;
         const size = Math.min(width, height);
@@ -45,38 +54,68 @@ export default function createPost() {
         // Crop photo
         const croppedPhoto = await ImageManipulator.manipulateAsync(
           photo.uri,
-          [{ crop: { originX: (width - size) / 2, originY: (height - size) / 2, width: size, height: size } }],
+          [
+            {
+              crop: {
+                originX: (width - size) / 2,
+                originY: (height - size) / 2,
+                width: size,
+                height: size,
+              },
+            },
+          ],
           { compress: 1, format: ImageManipulator.SaveFormat.PNG }
         );
 
         // Update state with the cropped photo URI
         setPhotos((prevPhotos) => [...prevPhotos, croppedPhoto.uri]);
-
-        // Save the cropped photo
-        await MediaLibrary.createAssetAsync(croppedPhoto.uri);
       } catch (error) {
-        console.error('Error taking photo:', error);
+        console.error("Error taking photo:", error);
       }
+    }
+  }
+
+  async function pickImage() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+      console.log(result);
+      if (!result.canceled) {
+        const croppedImage = await ImageManipulator.manipulateAsync(
+          result.assets[0].uri,
+          [{ resize: { width: 100, height: 100 } }],
+          { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+        );
+        // Update state with the selected image
+        setPhotos((prevPhotos) => [...prevPhotos, croppedImage.uri]);
+        //await MediaLibrary.createAssetAsync(result.uri);
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
     }
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.cameraContainer}>
-        <CameraView 
-          style={styles.camera} 
-          facing={facing} 
-          ref={cameraRef}
-        />
+        <CameraView style={styles.camera} facing={facing} ref={cameraRef} />
       </View>
-      
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-        <Fontisto name="spinner-refresh" size={24} color="white" />
+          <Fontisto name="spinner-refresh" size={24} color="white" />
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.button} onPress={takePhoto}>
-        <MaterialIcons name="camera" size={24} color="black" />
+          <MaterialIcons name="camera" size={24} color="white" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <AntDesign name="upload" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -91,41 +130,41 @@ export default function createPost() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 0,
   },
   cameraContainer: {
-    width: '100%',
-    height: '50%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ccc',
-    marginTop: '20%',
+    width: "100%",
+    height: "50%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ccc",
+    marginTop: "20%",
     marginBottom: 20,
   },
   camera: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
     paddingHorizontal: 20,
   },
   button: {
-    backgroundColor: '#1E90FF',
+    backgroundColor: "#DD614A",
     padding: 10,
     borderRadius: 5,
   },
   text: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   photoContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 20,
   },
   photo: {
@@ -134,7 +173,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   message: {
-    textAlign: 'center',
+    textAlign: "center",
     paddingBottom: 10,
   },
 });
