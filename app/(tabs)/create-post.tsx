@@ -110,8 +110,8 @@ export default function createPost() {
           <Fontisto name="spinner-refresh" size={24} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={takePhoto}>
-          <MaterialIcons name="camera" size={24} color="white" />
+        <TouchableOpacity style={styles.bigbutton} onPress={takePhoto}>
+          <MaterialIcons name="camera" size={54} color="white" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={pickImage}>
@@ -153,13 +153,28 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
   },
-  button: {
+  bigbutton: {
     backgroundColor: "#DD614A",
-    padding: 10,
-    borderRadius: 5,
+  paddingVertical: 10,
+  paddingHorizontal: 10,
+  borderRadius: 80,
+  width: 80,
+  height: 80,
+  justifyContent: "center",
+  alignItems: "center",
+  },
+  button: {
+  backgroundColor: "#DD614A",
+  paddingVertical: 10,
+  paddingHorizontal: 10,
+  borderRadius: 50,
+  width: 50,
+  height: 50,
+  justifyContent: "center",
+  alignItems: "center",
   },
   text: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     color: "white",
   },
