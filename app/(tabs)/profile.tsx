@@ -1,4 +1,6 @@
 import { Text, View } from "react-native";
+import UserCard from "../user-card";
+import UserPhotos from "../user-photos";
 
 export default function Profile() {
   return (
@@ -9,7 +11,11 @@ export default function Profile() {
         alignItems: "center",
       }}
     >
-      <Text>This is your profile</Text>
+      
+    
+      <UserCard/>
+      <View style={{ flex: 1 }}></View>
+      <UserPhotos/>
     </View>
   );
 }
