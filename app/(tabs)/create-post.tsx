@@ -155,9 +155,15 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#DD614A",
-    padding: 10,
-    borderRadius: 5,
+  paddingVertical: 10, // Adjust for vertical padding
+  paddingHorizontal: 10, // Adjust for horizontal padding
+  borderRadius: 50, // Large enough to make the button round
+  width: 50, // Make sure width and height are equal for a perfect circle
+  height: 50,
+  justifyContent: "center",
+  alignItems: "center",
   },
+  
   text: {
     fontSize: 16,
     fontWeight: "bold",
