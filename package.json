@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --tunnel",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -17,8 +17,11 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.13.0",
+    "@cloudinary/url-gen": "^1.21.0",
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/native": "^6.0.2",
+    "axios": "^1.7.7",
     "expo": "~51.0.28",
     "expo-camera": "^15.0.16",
     "expo-constants": "~16.0.2",
@@ -43,6 +46,9 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.10",
     "expo-apple-authentication": "~6.4.2"
+  },
+  "resolutions": {
+    "@types/react": "18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
