@@ -7,9 +7,7 @@ import {
   TouchableOpacity,
   View,
   Image,
-  ScrollView,
 } from "react-native";
-import * as MediaLibrary from "expo-media-library";
 import * as ImageManipulator from "expo-image-manipulator";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
@@ -18,7 +16,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function createPost() {
   const [facing, setFacing] = useState<CameraType>("back");
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photo, setPhoto] = useState<string>('');
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<any>(null);
 
@@ -68,7 +66,8 @@ export default function createPost() {
         );
 
         // Update state with the cropped photo URI
-        setPhotos((prevPhotos) => [...prevPhotos, croppedPhoto.uri]);
+        setPhoto(croppedPhoto.uri);
+        
       } catch (error) {
         console.error("Error taking photo:", error);
       }
@@ -90,13 +89,55 @@ export default function createPost() {
           [{ resize: { width: 100, height: 100 } }],
           { compress: 1, format: ImageManipulator.SaveFormat.PNG }
         );
+
         // Update state with the selected image
-        setPhotos((prevPhotos) => [...prevPhotos, croppedImage.uri]);
-        //await MediaLibrary.createAssetAsync(result.uri);
+        setPhoto(croppedImage.uri);
       }
     } catch (error) {
       console.error("Error picking image:", error);
     }
+  }
+
+  async function publishPost() {
+    const formData = new FormData();
+    const cloudName = 'drfu0sqz0';
+
+    const fileType = photo.split('.').at(-1);
+
+    const file = {
+      uri: photo,
+      name: `photo.${fileType}`,
+      type: `image/${fileType}`,
+    }
+
+    formData.append('file', file); // ignore this warning
+    formData.append('upload_preset', 'upload_preset');
+    formData.append('folder', 'postImages');
+
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      // this is the url of the image now in cloud storage
+      const photoUrl = data.secure_url;
+      console.log(photoUrl);
+
+      // post request to be made here
+
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+
   }
 
   return (
@@ -119,11 +160,15 @@ export default function createPost() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView horizontal style={styles.photoContainer}>
-        {photos.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.photo} />
-        ))}
-      </ScrollView>
+      {photo ? (
+        <View>
+          <Image source={{ uri: photo }} style={styles.photo} />
+          <TouchableOpacity style={styles.button} onPress={publishPost}>
+            <Text>Post</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
     </View>
   );
 }
@@ -163,13 +208,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
-  photoContainer: {
-    flexDirection: "row",
-    marginTop: 20,
-  },
   photo: {
-    width: 100,
-    height: 100,
+    width: 90,
+    height: 90,
     marginRight: 10,
   },
   message: {
