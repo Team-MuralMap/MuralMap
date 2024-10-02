@@ -12,6 +12,9 @@ import { useEffect, useState } from "react";
 import { fetchSites } from "@/client/client.mjs";
 
 export default function Index() {
+  const defaultSitePreview =
+    "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0f7bfb63-2a9d-4b1e-bdf6-08be9a3482fd/width=450/view-129-gigapixel-art-scale-2_00x.jpeg";
+
   const [location, setLocation] = useState<null | Location.LocationObject>(
     null
   );
@@ -30,7 +33,14 @@ export default function Index() {
     })();
   }, []);
 
-  const [sites, setSites] = useState([]);
+  const [sites, setSites] = useState<
+    Array<{
+      latitude: number;
+      longitude: number;
+      site_id: number;
+      site_preview_url: null | string;
+    }>
+  >([]);
   const [isSitesLoading, setIsSitesLoading] = useState(true);
 
   useEffect(() => {
@@ -42,11 +52,6 @@ export default function Index() {
   });
 
   const [previewedSite, setPreviewedSite] = useState<null | number>(null);
-
-  function getSitePreviewURL(site_id: number) {
-    site_id;
-    return "https://archive.nuartfestival.no/img/a_102_13020_713.jpg";
-  }
 
   if (Platform.OS === "android" || Platform.OS === "ios") {
     return (
@@ -67,14 +72,14 @@ export default function Index() {
           }}
           style={styles.map}
         >
-          {sites.map(({ latitude, longitude, site_id }) => (
+          {sites.map(({ latitude, longitude, site_id, site_preview_url }) => (
             <Marker key={site_id} coordinate={{ latitude, longitude }}>
               <Callout
                 onPress={() => console.log(`You just pressed site ${site_id}!`)}
               >
                 <Text>
                   <Image
-                    src={getSitePreviewURL(site_id)}
+                    src={site_preview_url || defaultSitePreview}
                     style={styles.sitePreviewImg}
                   />
                 </Text>
