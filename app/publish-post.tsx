@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
   StyleSheet,
@@ -9,15 +10,25 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 
 export default function publishPhoto() {
-  const [cloudUrl, setCloudUrl] = useState<null | string>(null);
   const { photoUri } = useLocalSearchParams<{ photoUri: string }>();
   const [caption, onCaptionChange] = useState<string>("");
-  // console.log(photoUri);
+  const [isPhotoPosting, setIsPhotoPosting] = useState<boolean>(false);
+  const [regionCoordinates, setRegionCoordinates] = useState<null | {
+    latitude: number;
+    longitude: number;
+  }>(null);
+  const [isMapBySite, setIsMapBySite] = useState(false);
+  // this will alternate between choosing a site and making a new site
+
+  useEffect(() => {
+    console.log("get the user's location and set it to regionCoordinates");
+  }, []);
 
   async function uploadPhoto() {
+    setIsPhotoPosting(true);
     const formData = new FormData();
     const cloudName = "drfu0sqz0";
 
@@ -48,11 +59,20 @@ export default function publishPhoto() {
       const data = await response.json();
 
       // this is the url of the image now in cloud storage
-      setCloudUrl(data.secure_url);
+      const cloudUrl = data.secure_url;
       console.log(cloudUrl);
+      setIsPhotoPosting(false);
     } catch (error) {
       console.error("Error uploading image to the cloud:", error);
     }
+    setIsPhotoPosting(false);
+  }
+
+  function handleRegionChange(event: any) {
+    setRegionCoordinates({
+      latitude: event.latitude,
+      longitude: event.longitude,
+    });
   }
 
   return (
@@ -60,18 +80,41 @@ export default function publishPhoto() {
       {photoUri ? (
         <>
           <Image source={{ uri: photoUri }} style={styles.photo} />
-          {/* <MapView style={styles.map} /> */}
+          <MapView
+            style={styles.map}
+            showsUserLocation={true}
+            followsUserLocation={true}
+            onRegionChangeComplete={handleRegionChange}
+          >
+            {regionCoordinates ? (
+              <Marker coordinate={{ ...regionCoordinates }} />
+            ) : null}
+          </MapView>
+          <TextInput
+            style={styles.captionInput}
+            value={caption}
+            onChangeText={onCaptionChange}
+            placeholder="Caption..."
+            placeholderTextColor={"#797979"}
+          />
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={router.back}>
               <Text>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={uploadPhoto}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={
+                // uploadPhoto
+                () => {
+                  console.log({ caption, regionCoordinates, photoUri });
+                }
+              }
+            >
               <Text>Post</Text>
             </TouchableOpacity>
           </View>
         </>
       ) : null}
-      <TextInput onChangeText={onCaptionChange}></TextInput>
     </View>
   );
 }
@@ -106,15 +149,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   photo: {
-    width: "50%",
+    width: screenWidth * 0.9,
     height: screenWidth * 0.9,
     borderColor: "#DD614A",
     borderStyle: "solid",
     borderWidth: 5,
     borderRadius: 5,
+    marginBottom: 20,
   },
   map: {
-    height: screenHeight * 0.2,
+    height: screenHeight * 0.3,
     width: "100%",
+  },
+  captionInput: {
+    width: "70%",
+    padding: 10,
+    backgroundColor: "#e1e1e1",
+    borderColor: "#DD614A",
+    borderStyle: "solid",
+    borderWidth: 5,
+    borderRadius: 20,
+    marginTop: 20,
   },
 });
