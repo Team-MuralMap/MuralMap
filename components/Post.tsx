@@ -2,11 +2,11 @@ import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { convertDateShort } from "../client/utils";
 
 export default function Post({
-  post: { author_id, body, img_url, created_at, post_id, site_id },
+  post: { user_id, body, img_url, created_at, post_id, site_id },
   author = { username: "<loading...>" },
 }: {
   post: {
-    author_id: number;
+    user_id: number;
     body: string;
     img_url: string;
     created_at: string;
