@@ -51,8 +51,6 @@ export default function Index() {
     });
   });
 
-  const [previewedSite, setPreviewedSite] = useState<null | number>(null);
-
   if (Platform.OS === "android" || Platform.OS === "ios") {
     return (
       <View
@@ -77,7 +75,8 @@ export default function Index() {
               <Callout
                 onPress={() => console.log(`You just pressed site ${site_id}!`)}
               >
-                <Text>
+                <Text style={styles.previewPopup}>
+                  <Text>{site_id}</Text>
                   <Image
                     src={site_preview_url || defaultSitePreview}
                     style={styles.sitePreviewImg}
@@ -87,7 +86,6 @@ export default function Index() {
             </Marker>
           ))}
         </MapView>
-        {previewedSite ? <Text>{previewedSite}</Text> : null}
       </View>
     );
   } else {
@@ -114,5 +112,10 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     paddingTop: 10,
     backgroundColor: "#00ff00",
+    position: "relative",
+    top: -screenWidth / 6,
+  },
+  previewPopup: {
+    backgroundColor: "990000",
   },
 });
