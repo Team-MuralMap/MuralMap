@@ -28,3 +28,12 @@ export const fetchSites = async () => {
     .then(({ data }) => data)
     .catch(defaultCatch);
 };
+
+export const fetchCommentsByPostId = async (post_id) => {
+  try {
+    const { data } = await apiClient.get(`posts/${post_id}/comments`);
+    return data;
+  } catch (error) {
+    return [];
+  }
+};

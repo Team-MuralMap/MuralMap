@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import { fetchPosts, fetchUsers } from "../../client/client.mjs";
 import Post from "@/components/Post";
 import { useRouter } from "expo-router";
@@ -36,11 +42,21 @@ export default function Photos() {
           contentContainerStyle={styles.flatListContent}
           data={posts}
           renderItem={({ item }) => {
-            const author = users.find((user: any) => user.user_id === item.user_id);
+            const author = users.find(
+              (user: any) => user.user_id === item.user_id
+            );
 
             return (
               <TouchableOpacity
-                onPress={() => router.push({ pathname: '/view-post', params: { post: JSON.stringify(item), author: JSON.stringify(author) } })}
+                onPress={() =>
+                  router.push({
+                    pathname: "/view-post",
+                    params: {
+                      post: JSON.stringify(item),
+                      author: JSON.stringify(author),
+                    },
+                  })
+                }
               >
                 <Post post={item} author={author} />
               </TouchableOpacity>
