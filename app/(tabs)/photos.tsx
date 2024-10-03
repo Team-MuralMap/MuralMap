@@ -44,7 +44,7 @@ export default function Photos() {
           data={posts}
           renderItem={({ item }) => {
             const author = users.find(
-              (user: any) => user.user_id === item.author_id
+              (user: any) => user.user_id === item.user_id
             );
             return <Post post={item} author={author} />;
           }}

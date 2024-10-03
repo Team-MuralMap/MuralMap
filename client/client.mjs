@@ -21,3 +21,10 @@ export const fetchUsers = async () => {
     .then(({ data }) => data)
     .catch(defaultCatch);
 };
+
+export const fetchSites = async () => {
+  return apiClient
+    .get("sites")
+    .then(({ data }) => data)
+    .catch(defaultCatch);
+};
