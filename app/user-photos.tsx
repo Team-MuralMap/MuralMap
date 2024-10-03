@@ -10,14 +10,8 @@ import {
 import axios from "axios";
 import { fetchPosts } from "@/client/client.mjs";
 
-// Define the type for the photo data based on the API response
-interface Photo {
-  id: string;
-  url: string; // Assuming the API includes a URL for the photo
-}
-
 const UserPhotos: React.FC = () => {
-  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [photos, setPhotos] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +68,7 @@ const UserPhotos: React.FC = () => {
         data={photos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Image source={{ uri: item.url }} style={styles.photo} />
+          <Image src={item.img_url} style={styles.photo} />
         )}
         numColumns={3} // Number of columns in the grid
         columnWrapperStyle={styles.row} // Style for each row
