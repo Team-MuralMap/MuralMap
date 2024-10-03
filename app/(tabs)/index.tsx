@@ -79,12 +79,10 @@ export default function Index() {
                     console.log(`You just pressed site ${site_id}!`)
                   }
                 >
-                  <Text style={styles.previewPopup}>
-                    <WebView
-                      source={{ uri: site_preview_url || defaultSitePreview }}
-                      style={styles.sitePreviewImg}
-                    />
-                  </Text>
+                  <WebView
+                    source={{ uri: site_preview_url || defaultSitePreview }}
+                    style={styles.sitePreviewImg}
+                  />
                 </Callout>
               </Marker>
             ) : (
