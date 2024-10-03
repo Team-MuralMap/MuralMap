@@ -10,6 +10,7 @@ import MapView, { Callout, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { fetchSites } from "@/client/client.mjs";
+import WebView from "react-native-webview";
 
 export default function Index() {
   const defaultSitePreview =
@@ -70,21 +71,30 @@ export default function Index() {
           }}
           style={styles.map}
         >
-          {sites.map(({ latitude, longitude, site_id, site_preview_url }) => (
-            <Marker key={site_id} coordinate={{ latitude, longitude }}>
-              <Callout
-                onPress={() => console.log(`You just pressed site ${site_id}!`)}
-              >
-                <Text style={styles.previewPopup}>
-                  <Text>{site_id}</Text>
-                  <Image
-                    src={site_preview_url || defaultSitePreview}
-                    style={styles.sitePreviewImg}
-                  />
-                </Text>
-              </Callout>
-            </Marker>
-          ))}
+          {sites.map(({ latitude, longitude, site_id, site_preview_url }) =>
+            site_preview_url ? (
+              <Marker key={site_id} coordinate={{ latitude, longitude }}>
+                <Callout
+                  onPress={() =>
+                    console.log(`You just pressed site ${site_id}!`)
+                  }
+                >
+                  <Text style={styles.previewPopup}>
+                    <WebView
+                      source={{ uri: site_preview_url || defaultSitePreview }}
+                      style={styles.sitePreviewImg}
+                    />
+                  </Text>
+                </Callout>
+              </Marker>
+            ) : (
+              <Marker
+                pinColor={"blue"}
+                coordinate={{ latitude, longitude }}
+                key={site_id}
+              ></Marker>
+            )
+          )}
         </MapView>
       </View>
     );
@@ -107,15 +117,5 @@ const styles = StyleSheet.create({
   sitePreviewImg: {
     width: screenWidth / 3,
     height: screenWidth / 3,
-    borderColor: "#990000",
-    borderWidth: 20,
-    borderStyle: "solid",
-    paddingTop: 10,
-    backgroundColor: "#00ff00",
-    position: "relative",
-    top: -screenWidth / 6,
-  },
-  previewPopup: {
-    backgroundColor: "990000",
   },
 });
