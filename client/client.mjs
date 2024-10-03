@@ -37,3 +37,12 @@ export const fetchCommentsByPostId = async (post_id) => {
     return [];
   }
 };
+
+export const fetchUserByUserId = async (user_id) => {
+  try {
+    const { data } = await apiClient.get(`users/${user_id}`);
+    return data;
+  } catch (error) {
+      defaultCatch(error);
+  }
+};
