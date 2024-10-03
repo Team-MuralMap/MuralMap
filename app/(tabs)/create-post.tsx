@@ -172,7 +172,16 @@ const styles = StyleSheet.create({
   height: 50,
   justifyContent: "center",
   alignItems: "center",
+    backgroundColor: "#DD614A",
+  paddingVertical: 10, // Adjust for vertical padding
+  paddingHorizontal: 10, // Adjust for horizontal padding
+  borderRadius: 50, // Large enough to make the button round
+  width: 50, // Make sure width and height are equal for a perfect circle
+  height: 50,
+  justifyContent: "center",
+  alignItems: "center",
   },
+  
   text: {
     fontSize: 20,
     fontWeight: "bold",
