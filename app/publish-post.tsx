@@ -1,5 +1,7 @@
+import { createPostWithSite } from "@/client/client.mjs";
+import { UserContext } from "@/contexts/UserContext";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -21,6 +23,7 @@ export default function publishPhoto() {
     longitude: number;
   }>(null);
   const [isMapBySite, setIsMapBySite] = useState(false);
+  const { loggedInUser } = useContext(UserContext);
   // this will alternate between choosing a site and making a new site
 
   useEffect(() => {
@@ -61,11 +64,22 @@ export default function publishPhoto() {
       // this is the url of the image now in cloud storage
       const cloudUrl = data.secure_url;
       console.log(cloudUrl);
+      await postPhoto({ img_url: cloudUrl });
       setIsPhotoPosting(false);
     } catch (error) {
       console.error("Error uploading image to the cloud:", error);
+      setIsPhotoPosting(false);
     }
-    setIsPhotoPosting(false);
+  }
+
+  async function postPhoto({ img_url }: { img_url: string }) {
+    const photoPayload = {
+      user_id: loggedInUser.user_id,
+      img_url,
+      body: caption,
+    };
+    const sitePayload = { ...regionCoordinates, user_id: loggedInUser.user_id };
+    createPostWithSite(photoPayload, sitePayload);
   }
 
   function handleRegionChange(event: any) {
@@ -104,10 +118,10 @@ export default function publishPhoto() {
             <TouchableOpacity
               style={styles.button}
               onPress={
-                // uploadPhoto
-                () => {
-                  console.log({ caption, regionCoordinates, photoUri });
-                }
+                uploadPhoto
+                // () => {
+                //   console.log({ caption, regionCoordinates, photoUri });
+                // }
               }
             >
               <Text>Post</Text>
