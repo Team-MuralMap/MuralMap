@@ -104,7 +104,7 @@ export default function createPost() {
 
     const fileType = photo.split('.').at(-1);
 
-    const file = {
+    const file: any = {
       uri: photo,
       name: `photo.${fileType}`,
       type: `image/${fileType}`,
