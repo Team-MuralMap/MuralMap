@@ -18,7 +18,7 @@ const UserPhotos: React.FC = () => {
   useEffect(() => {
     // Fetch the photos for the user with ID 1
 
-    fetchPosts({ user_id: 3 })
+    fetchPosts({ user_id: 1 })
       .then(({ posts }) => {
         console.log(posts);
         setPhotos(posts);

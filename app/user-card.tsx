@@ -20,7 +20,7 @@ const UserCard: React.FC = () => {
    
     const fetchUser = async () => {
       try {
-        const response = await axios.get<{ user: User }>('https://muralmap-api.onrender.com/api/users/3');
+        const response = await axios.get<{ user: User }>('https://muralmap-api.onrender.com/api/users/1');
         setUser(response.data.user); 
         setLoading(false);
       } catch (err) {
