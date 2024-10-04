@@ -63,7 +63,6 @@ export default function publishPhoto() {
 
       // this is the url of the image now in cloud storage
       const cloudUrl = data.secure_url;
-      console.log(cloudUrl);
       await postPhoto({ img_url: cloudUrl });
       setIsPhotoPosting(false);
     } catch (error) {
@@ -79,7 +78,12 @@ export default function publishPhoto() {
       body: caption,
     };
     const sitePayload = { ...regionCoordinates, user_id: loggedInUser.user_id };
-    createPostWithSite(photoPayload, sitePayload);
+    try {
+      createPostWithSite(photoPayload, sitePayload);
+    } catch {
+      console.error("Error posting photo to database");
+      setIsPhotoPosting(false);
+    }
   }
 
   function handleRegionChange(event: any) {
@@ -115,15 +119,7 @@ export default function publishPhoto() {
             <TouchableOpacity style={styles.button} onPress={router.back}>
               <Text>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={
-                uploadPhoto
-                // () => {
-                //   console.log({ caption, regionCoordinates, photoUri });
-                // }
-              }
-            >
+            <TouchableOpacity style={styles.button} onPress={uploadPhoto}>
               <Text>Post</Text>
             </TouchableOpacity>
           </View>
