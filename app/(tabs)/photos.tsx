@@ -21,8 +21,6 @@ async function getCityByCoordinates(
         data.address.city || data.address.town || data.address.village || "";
       return city;
     } else {
-      console.log(url);
-      console.log(data);
       return "";
     }
   } catch (error) {

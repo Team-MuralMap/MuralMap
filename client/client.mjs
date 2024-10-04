@@ -55,3 +55,11 @@ export const fetchSiteBySiteId = async (site_id) => {
     defaultCatch(error);
   }
 };
+
+export const deletePostByPostId = async (post_id) => {
+  try {
+    await apiClient.delete(`posts/${post_id}`);
+  } catch (error) {
+    defaultCatch(error);
+  }
+};
