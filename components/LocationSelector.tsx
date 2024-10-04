@@ -101,8 +101,9 @@ export default function LocationSelector({
           showsUserLocation={true}
           style={styles.map}
         >
-          {sites.map(({ latitude, longitude, site_id, site_preview_url }) =>
-            site_preview_url ? (
+          {sites.map(
+            ({ latitude, longitude, site_id, site_preview_url }) => (
+              // site_preview_url ? (
               <Marker
                 key={
                   String(site_id) + (site_id === selectedSite ? "-clicked" : "")
@@ -117,27 +118,40 @@ export default function LocationSelector({
                     this[`markerRef${site_id}`].showCallout();
                   }, 100);
                 }}
-                pinColor={site_id === selectedSite ? "orange" : "red"}
-                zIndex={site_id === selectedSite ? 1 : 0}
+                pinColor={
+                  site_id === selectedSite
+                    ? "orange" //selected
+                    : site_preview_url
+                    ? "red" // has images
+                    : "blue" // no images
+                }
+                zIndex={site_id === selectedSite ? 2 : site_preview_url ? 1 : 0}
               >
-                <Callout
-                  onPress={() => {
-                    console.log(`You just pressed callout ${site_id}!`);
-                  }}
-                >
-                  <WebView
-                    source={{ uri: site_preview_url || defaultSitePreview }}
-                    style={styles.sitePreviewImg}
-                  />
-                </Callout>
+                {site_preview_url ? (
+                  <Callout
+                    onPress={() => {
+                      console.log(`You just pressed callout ${site_id}!`);
+                    }}
+                  >
+                    <WebView
+                      source={{ uri: site_preview_url || defaultSitePreview }}
+                      style={styles.sitePreviewImg}
+                    />
+                  </Callout>
+                ) : (
+                  <Callout>
+                    <Text>No images here...</Text>
+                  </Callout>
+                )}
               </Marker>
-            ) : (
-              <Marker
-                pinColor={"blue"}
-                coordinate={{ latitude, longitude }}
-                key={site_id}
-              ></Marker>
             )
+            // ) : (
+            //   <Marker
+            //     pinColor={"blue"}
+            //     coordinate={{ latitude, longitude }}
+            //     key={site_id}
+            //   ></Marker>
+            // )
           )}
         </MapView>
       ) : (
@@ -174,7 +188,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   map: {
-    height: screenHeight * 0.3,
+    height: screenHeight * 0.5,
     width: screenWidth,
   },
   button: {

@@ -24,6 +24,7 @@ export default function publishPhoto() {
     longitude: number;
   }>(null);
   const { loggedInUser } = useContext(UserContext);
+  const [isImageBig, setIsImageBig] = useState(false);
 
   useEffect(() => {
     // Get users location on load (load of app?) and push it to regionCoordinates for initalRegion
@@ -97,7 +98,10 @@ export default function publishPhoto() {
     <View style={styles.container}>
       {photoUri ? (
         <>
-          <Image source={{ uri: photoUri }} style={styles.photo} />
+          <Image
+            source={{ uri: photoUri }}
+            style={isImageBig ? styles.bigPhoto : styles.smallPhoto}
+          />
           <LocationSelector
             regionCoordinates={regionCoordinates}
             setRegionCoordinates={setRegionCoordinates}
@@ -158,10 +162,21 @@ const styles = StyleSheet.create({
     width: screenWidth,
     marginTop: 20,
   },
-  photo: {
+  smallPhoto: {
+    width: screenWidth * 0.5,
+    height: screenWidth * 0.5,
+    borderColor: "#DD614A",
+    borderStyle: "solid",
+    borderWidth: 5,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  bigPhoto: {
+    position: "absolute",
     width: screenWidth * 0.9,
     height: screenWidth * 0.9,
-    borderColor: "#DD614A",
+    left: screenWidth * 0.05,
+    borderColor: "green",
     borderStyle: "solid",
     borderWidth: 5,
     borderRadius: 5,
