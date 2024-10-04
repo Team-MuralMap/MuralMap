@@ -86,7 +86,9 @@ export default function publishPhoto() {
           body: caption,
           site_id: selectedSite,
         };
-        post = await createPostOnSite(photoPayload);
+
+        const newPostResponse = await createPostOnSite(photoPayload);
+        post = newPostResponse.post;
       } else {
         const photoPayload = {
           user_id: loggedInUser.user_id,
@@ -97,16 +99,24 @@ export default function publishPhoto() {
           ...regionCoordinates,
           user_id: loggedInUser.user_id,
         };
-        post = await createPostAndSite(photoPayload, sitePayload).post;
+        const newPostResponse = await createPostAndSite(
+          photoPayload,
+          sitePayload
+        );
+        post = newPostResponse.post;
       }
       console.log("This will need changing for diff route: post/:post_id");
-      router.push({
-        pathname: "/view-post",
-        params: {
-          post: JSON.stringify(post), // Now post is accessible
-          author: JSON.stringify(loggedInUser),
-        },
-      });
+      //CODE FOR REROUTING ONCE ROUTERS ARE BETTER
+
+      // router.push({
+      //   pathname: "/view-post",
+      //   params: {
+      //     post: JSON.stringify(post), // Now post is accessible
+      //     author: JSON.stringify(loggedInUser),
+      //   },
+      // });
+
+      router.push("/photos");
     } catch {
       console.error("Error posting photo to database");
       setIsPhotoPosting(false);
