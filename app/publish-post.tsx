@@ -25,6 +25,7 @@ export default function publishPhoto() {
   }>(null);
   const { loggedInUser } = useContext(UserContext);
   const [isImageBig, setIsImageBig] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   // form:
   const [isChoiceBySite, setIsChoiceBySite] = useState(true);
@@ -144,13 +145,26 @@ export default function publishPhoto() {
                 <ActivityIndicator size="large" color="#ffffff" />
               </View>
             ) : (
-              <TouchableOpacity style={styles.button} onPress={uploadPhoto}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  if (
+                    caption &&
+                    (regionCoordinates || (isChoiceBySite && selectedSite))
+                  ) {
+                    uploadPhoto();
+                  } else {
+                    setErrorMsg("Please choose a location and caption");
+                  }
+                }}
+              >
                 <Text>Post</Text>
               </TouchableOpacity>
             )}
           </View>
         </>
       ) : null}
+      {errorMsg ? <Text>{errorMsg}</Text> : null}
     </View>
   );
 }
