@@ -18,7 +18,7 @@ const UserPhotos: React.FC = () => {
   useEffect(() => {
     // Fetch the photos for the user with ID 1
 
-    fetchPosts({ user_id: 1 })
+    fetchPosts({ user_id: 3 })
       .then(({ posts }) => {
         console.log(posts);
         setPhotos(posts);
@@ -29,21 +29,6 @@ const UserPhotos: React.FC = () => {
         setLoading(false);
       });
 
-    // const fetchPhotos = async () => {
-    //   try {
-    //     // Replace this URL with the actual endpoint for the user's photos
-    //     const response = await axios.get<Photo[]>(
-    //       "https://muralmap-api.onrender.com/api/users/1/photos"
-    //     );
-    //     setPhotos(response.data);
-    //     setLoading(false);
-    //   } catch (err) {
-    //     setError("Failed to fetch photos");
-    //     setLoading(false);
-    //   }
-    // };
-
-    // fetchPhotos();
   }, []);
 
   if (loading) {
@@ -70,8 +55,8 @@ const UserPhotos: React.FC = () => {
         renderItem={({ item }) => (
           <Image src={item.img_url} style={styles.photo} />
         )}
-        numColumns={3} // Number of columns in the grid
-        columnWrapperStyle={styles.row} // Style for each row
+        numColumns={3}
+        columnWrapperStyle={styles.row}
       />
     </View>
   );
