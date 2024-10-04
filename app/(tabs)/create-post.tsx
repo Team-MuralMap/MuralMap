@@ -96,7 +96,7 @@ export default function createPost() {
       if (!result.canceled) {
         const croppedImage = await ImageManipulator.manipulateAsync(
           result.assets[0].uri,
-          [{ resize: { width: 100, height: 100 } }],
+          [{ resize: { width: 1080, height: 1080 } }],
           { compress: 1, format: ImageManipulator.SaveFormat.PNG }
         );
 

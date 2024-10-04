@@ -62,12 +62,19 @@ export default function LocationSelector({
     });
   }
 
+  const [selectedSite, setSelectedSite] = useState<null | number>(null);
+
   return (
     <>
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          setIsChoiceBySite((bool) => !bool);
+          setIsChoiceBySite((bool) => {
+            if (bool) {
+              setSelectedSite(null);
+            }
+            return !bool;
+          });
         }}
       >
         <Text>{isChoiceBySite ? "New site" : "Existing Site"}</Text>
@@ -91,11 +98,26 @@ export default function LocationSelector({
         >
           {sites.map(({ latitude, longitude, site_id, site_preview_url }) =>
             site_preview_url ? (
-              <Marker key={site_id} coordinate={{ latitude, longitude }}>
+              <Marker
+                key={
+                  String(site_id) + (site_id === selectedSite ? "-clicked" : "")
+                }
+                ref={(ref) => {
+                  this[`markerRef${site_id}`] = ref;
+                }}
+                coordinate={{ latitude, longitude }}
+                onPress={() => {
+                  setSelectedSite(site_id);
+                  setTimeout(() => {
+                    this[`markerRef${site_id}`].showCallout();
+                  }, 100);
+                }}
+                pinColor={site_id === selectedSite ? "yellow" : "red"}
+              >
                 <Callout
-                  onPress={() =>
-                    console.log(`You just pressed site ${site_id}!`)
-                  }
+                  onPress={() => {
+                    console.log(`You just pressed callout ${site_id}!`);
+                  }}
                 >
                   <WebView
                     source={{ uri: site_preview_url || defaultSitePreview }}
