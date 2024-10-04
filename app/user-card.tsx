@@ -4,10 +4,11 @@ import axios from 'axios';
 
 // Define the type for the user data based on the API response
 interface User {
-  id: string;
-  name: string;
+  user_id: number;
+  username: string;
   email: string;
-  avatarUrl: string; // Assuming the API includes an avatar URL
+  name: string;
+  avatar_url: string; // Assuming the API includes an avatar URL
 }
 
 const UserCard: React.FC = () => {
@@ -16,12 +17,11 @@ const UserCard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch the logged-in user's data
+    // Fetch the user data for user ID 3
     const fetchUser = async () => {
       try {
-        // Replace this URL with the actual endpoint for the logged-in user
-        const response = await axios.get<User>('https://muralmap-api.onrender.com/api/users/1'); 
-        setUser(response.data);
+        const response = await axios.get<{ user: User }>('https://muralmap-api.onrender.com/api/users/3');
+        setUser(response.data.user); // Access the nested user object
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch user');
@@ -58,9 +58,11 @@ const UserCard: React.FC = () => {
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
+      <Image source={{ uri: user.avatar_url }} style={styles.avatar} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.username}>@{user.username}</Text>
+        <Text style={styles.email}>{user.email}</Text>
       </View>
     </View>
   );
@@ -75,7 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Row for landscape layout
     alignItems: 'center', // Center items vertically
     width: '90%', // Width of the card
-    height: 100, // Fixed height for the landscape rectangle
+    height: 130, // Adjusted height to accommodate username
     shadowColor: '#000', // Optional: Add shadow for a more elevated look
     shadowOffset: { width: 0, height: 1 }, // Shadow properties
     shadowOpacity: 0.2,
@@ -98,9 +100,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ffffff', // White text color for visibility
   },
+  username: {
+    fontSize: 16,
+    color: '#ffffff', // White text color
+    marginTop: 4, // Space between name and username
+  },
   email: {
     fontSize: 14,
     color: '#ffffff', // White text color for visibility
+    marginTop: 4, // Space between username and email
   },
   loadingContainer: {
     flex: 1,
