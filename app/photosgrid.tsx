@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-function PhotosView() {
-  // Initialize the state to true indicating the default view is grid.
-  const [isGridView, setIsGridView] = useState(true);
+interface Photo {
+  id: string;
+  url: string;
+}
 
-  // Function to switch to list view
+interface PhotoGalleryProps {
+  photos: Photo[];
+}
+
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos }) => {
+  const [isGridView, setIsGridView] = useState<boolean>(true);
+
   const setListView = () => {
     setIsGridView(false);
   };
 
-  // Function to switch back to grid view
   const setGridView = () => {
     setIsGridView(true);
   };
@@ -18,17 +24,18 @@ function PhotosView() {
     <div>
       <button onClick={setListView}>List View</button>
       <button onClick={setGridView}>Grid View</button>
-      <div className={isGridView ? "grid-container" : "list-container"}>
+      <div className={isGridView ? 'grid-container' : 'list-container'}>
         {photos.map((photo) => (
           <div
             key={photo.id}
-            className={isGridView ? "grid-item" : "list-item"}
+            className={isGridView ? 'grid-item' : 'list-item'}
           >
+            <img src={photo.url} alt="Photo" />
           </div>
         ))}
       </div>
     </div>
   );
-}
+};
 
-export default PhotosView;
+export default PhotoGallery;
