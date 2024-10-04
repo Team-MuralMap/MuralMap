@@ -47,7 +47,7 @@ export const fetchUserByUserId = async (user_id) => {
   }
 };
 
-export const createPostWithSite = async (photoPayload, sitePayload) => {
+export const createPostAndSite = async (photoPayload, sitePayload) => {
   return apiClient
     .post("sites", { ...sitePayload })
     .then(({ data }) => {
@@ -58,5 +58,6 @@ export const createPostWithSite = async (photoPayload, sitePayload) => {
         created_at: Date.now(),
       });
     })
+    .then(({ data }) => data)
     .catch(defaultCatch);
 };

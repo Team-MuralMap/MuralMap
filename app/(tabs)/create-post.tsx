@@ -120,7 +120,9 @@ export default function createPost() {
         </TouchableOpacity>
 
         {isTakenPhotoLoading ? (
-          <ActivityIndicator size="large" color="#DD614A" />
+          <View style={styles.bigbutton}>
+            <ActivityIndicator size="large" color="#ffffff" />
+          </View>
         ) : (
           <TouchableOpacity style={styles.bigbutton} onPress={takePhoto}>
             <MaterialIcons name="camera" size={54} color="white" />

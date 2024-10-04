@@ -1,8 +1,9 @@
-import { createPostWithSite } from "@/client/client.mjs";
+import { createPostAndSite } from "@/client/client.mjs";
 import { UserContext } from "@/contexts/UserContext";
 import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Image,
@@ -79,7 +80,15 @@ export default function publishPhoto() {
     };
     const sitePayload = { ...regionCoordinates, user_id: loggedInUser.user_id };
     try {
-      createPostWithSite(photoPayload, sitePayload);
+      const { post } = await createPostAndSite(photoPayload, sitePayload);
+      console.log("This will need changing for diff route: post/:post_id");
+      router.push({
+        pathname: "/view-post",
+        params: {
+          post: JSON.stringify(post), // Now post is accessible
+          author: JSON.stringify(loggedInUser),
+        },
+      });
     } catch {
       console.error("Error posting photo to database");
       setIsPhotoPosting(false);
@@ -119,9 +128,15 @@ export default function publishPhoto() {
             <TouchableOpacity style={styles.button} onPress={router.back}>
               <Text>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={uploadPhoto}>
-              <Text>Post</Text>
-            </TouchableOpacity>
+            {isPhotoPosting ? (
+              <View style={styles.button}>
+                <ActivityIndicator size="large" color="#ffffff" />
+              </View>
+            ) : (
+              <TouchableOpacity style={styles.button} onPress={uploadPhoto}>
+                <Text>Post</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </>
       ) : null}
