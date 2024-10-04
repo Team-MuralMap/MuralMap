@@ -43,6 +43,15 @@ export const fetchUserByUserId = async (user_id) => {
     const { data } = await apiClient.get(`users/${user_id}`);
     return data;
   } catch (error) {
-      defaultCatch(error);
+    defaultCatch(error);
+  }
+};
+
+export const fetchSiteBySiteId = async (site_id) => {
+  try {
+    const { data } = await apiClient.get(`sites/${site_id}`);
+    return data;
+  } catch (error) {
+    defaultCatch(error);
   }
 };
