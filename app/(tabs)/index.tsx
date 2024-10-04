@@ -50,7 +50,7 @@ export default function Index() {
       setSites(sites);
       setIsSitesLoading(false);
     });
-  });
+  }, []);
 
   if (Platform.OS === "android" || Platform.OS === "ios") {
     return (
