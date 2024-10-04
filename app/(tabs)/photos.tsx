@@ -4,19 +4,15 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
 } from "react-native";
 import { fetchPosts, fetchUsers } from "../../client/client.mjs";
 import Post from "@/components/Post";
-import { useRouter } from "expo-router";
 
 export default function Photos() {
   const [posts, setPosts] = useState<any>([]);
   const [isPostsLoading, setIsPostsLoading] = useState(true);
   const [users, setUsers] = useState<any>([]);
   const [isUsersLoading, setIsUsersLoading] = useState(true);
-
-  const router = useRouter();
 
   useEffect(() => {
     setIsPostsLoading(true);
@@ -45,22 +41,7 @@ export default function Photos() {
             const author = users.find(
               (user: any) => user.user_id === item.user_id
             );
-
-            return (
-              <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: "/view-post",
-                    params: {
-                      post: JSON.stringify(item),
-                      author: JSON.stringify(author),
-                    },
-                  })
-                }
-              >
-                <Post post={item} author={author} />
-              </TouchableOpacity>
-            );
+            return <Post post={item} author={author} />;
           }}
         />
       )}

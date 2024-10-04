@@ -2,7 +2,7 @@ import Post from "@/components/Post";
 import { useLocalSearchParams } from "expo-router";
 import CommentsSection from "../components/CommentsSection";
 import { useState, useEffect } from "react";
-import { fetchCommentsByPostId, fetchUserByUserId } from "@/client/client.mjs"; // Ensure you import the fetchUserById function
+import { fetchCommentsByPostId, fetchUserByUserId } from "@/client/client.mjs";
 
 export default function ViewPost() {
   const [comments, SetComments] = useState([]);
