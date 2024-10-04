@@ -40,6 +40,7 @@ export default function Index() {
       longitude: number;
       site_id: number;
       site_preview_url: null | string;
+      post_id: number;
     }>
   >([]);
   const [isSitesLoading, setIsSitesLoading] = useState(true);

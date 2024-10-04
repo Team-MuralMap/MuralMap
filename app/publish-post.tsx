@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import LocationSelector from "../components/LocationSelector";
 
 export default function publishPhoto() {
   const { photoUri } = useLocalSearchParams<{ photoUri: string }>();
@@ -95,28 +95,15 @@ export default function publishPhoto() {
     }
   }
 
-  function handleRegionChange(event: any) {
-    setRegionCoordinates({
-      latitude: event.latitude,
-      longitude: event.longitude,
-    });
-  }
-
   return (
     <View style={styles.container}>
       {photoUri ? (
         <>
           <Image source={{ uri: photoUri }} style={styles.photo} />
-          <MapView
-            style={styles.map}
-            showsUserLocation={true}
-            followsUserLocation={true}
-            onRegionChange={handleRegionChange}
-          >
-            {regionCoordinates ? (
-              <Marker coordinate={{ ...regionCoordinates }} />
-            ) : null}
-          </MapView>
+          <LocationSelector
+            regionCoordinates={regionCoordinates}
+            setRegionCoordinates={setRegionCoordinates}
+          />
           <TextInput
             style={styles.captionInput}
             value={caption}
