@@ -133,17 +133,6 @@ export default function createPost() {
           <AntDesign name="upload" size={24} color="white" />
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() =>
-          goToPublishPhoto(
-            "https://media.istockphoto.com/id/1500208706/vector/smiling-face-emoji-character-spray-painted-graffiti-smile-face-in-black-over-white-isolated.jpg?s=612x612&w=0&k=20&c=UHfsGyJYWdBKyJ_5WuSLXrgUBebb5zKAdxIkiuOlTp4="
-          )
-        }
-      >
-        <Text>DEV</Text>
-      </TouchableOpacity>
     </View>
   );
 }
