@@ -34,7 +34,11 @@ export const createPostWithSite = async (photoPayload, sitePayload) => {
     .post("sites", { ...sitePayload })
     .then(({ data }) => {
       const site_id = data.site.site_id;
-      return apiClient.post("posts", { ...photoPayload, site_id });
+      return apiClient.post("posts", {
+        ...photoPayload,
+        site_id,
+        created_at: Date.now(),
+      });
     })
     .catch(defaultCatch);
 };

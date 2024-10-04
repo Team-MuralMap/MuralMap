@@ -23,11 +23,11 @@ export default function publishPhoto() {
     longitude: number;
   }>(null);
   const [isMapBySite, setIsMapBySite] = useState(false);
-  const { loggedInUser } = useContext(UserContext);
   // this will alternate between choosing a site and making a new site
+  const { loggedInUser } = useContext(UserContext);
 
   useEffect(() => {
-    console.log("get the user's location and set it to regionCoordinates");
+    // Get users location on load (load of app?) and push it to regionCoordinates for initalRegion
   }, []);
 
   async function uploadPhoto() {
@@ -98,7 +98,7 @@ export default function publishPhoto() {
             style={styles.map}
             showsUserLocation={true}
             followsUserLocation={true}
-            onRegionChangeComplete={handleRegionChange}
+            onRegionChange={handleRegionChange}
           >
             {regionCoordinates ? (
               <Marker coordinate={{ ...regionCoordinates }} />
