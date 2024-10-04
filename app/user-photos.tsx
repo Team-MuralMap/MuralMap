@@ -80,8 +80,9 @@ const UserPhotos: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '97%',
     padding: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#f2f2f2",
   },
   loadingContainer: {
     flex: 1,
@@ -94,13 +95,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photo: {
-    width: "30%", // Width of each photo, adjust as necessary
-    height: 100, // Height of each photo
-    margin: 5, // Margin around each photo
-    borderRadius: 8, // Optional: Rounded corners for the photos
+    width: "30%",
+    height: 100,
+    margin: 5,
+    borderRadius: 8,
   },
   row: {
-    justifyContent: "space-between", // Space between items in a row
+    justifyContent: "space-between",
   },
 });
 
