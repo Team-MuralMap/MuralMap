@@ -1,4 +1,4 @@
-import { createPostAndSite } from "@/client/client.mjs";
+import { createPostAndSite, createPostOnSite } from "@/client/client.mjs";
 import { UserContext } from "@/contexts/UserContext";
 import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -25,6 +25,10 @@ export default function publishPhoto() {
   }>(null);
   const { loggedInUser } = useContext(UserContext);
   const [isImageBig, setIsImageBig] = useState(false);
+
+  // form:
+  const [isChoiceBySite, setIsChoiceBySite] = useState(true);
+  const [selectedSite, setSelectedSite] = useState<null | number>(null);
 
   useEffect(() => {
     // Get users location on load (load of app?) and push it to regionCoordinates for initalRegion
@@ -72,14 +76,28 @@ export default function publishPhoto() {
   }
 
   async function postPhoto({ img_url }: { img_url: string }) {
-    const photoPayload = {
-      user_id: loggedInUser.user_id,
-      img_url,
-      body: caption,
-    };
-    const sitePayload = { ...regionCoordinates, user_id: loggedInUser.user_id };
+    let post: any = {};
     try {
-      const { post } = await createPostAndSite(photoPayload, sitePayload);
+      if (isChoiceBySite) {
+        const photoPayload = {
+          user_id: loggedInUser.user_id,
+          img_url,
+          body: caption,
+          site_id: selectedSite,
+        };
+        post = await createPostOnSite(photoPayload);
+      } else {
+        const photoPayload = {
+          user_id: loggedInUser.user_id,
+          img_url,
+          body: caption,
+        };
+        const sitePayload = {
+          ...regionCoordinates,
+          user_id: loggedInUser.user_id,
+        };
+        post = await createPostAndSite(photoPayload, sitePayload).post;
+      }
       console.log("This will need changing for diff route: post/:post_id");
       router.push({
         pathname: "/view-post",
@@ -105,6 +123,10 @@ export default function publishPhoto() {
           <LocationSelector
             regionCoordinates={regionCoordinates}
             setRegionCoordinates={setRegionCoordinates}
+            isChoiceBySite={isChoiceBySite}
+            setIsChoiceBySite={setIsChoiceBySite}
+            selectedSite={selectedSite}
+            setSelectedSite={setSelectedSite}
           />
           <TextInput
             style={styles.captionInput}

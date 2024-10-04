@@ -1,6 +1,7 @@
 import { fetchSites } from "@/client/client.mjs";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   StyleSheet,
   Text,
@@ -16,12 +17,19 @@ const defaultSitePreview =
 export default function LocationSelector({
   regionCoordinates,
   setRegionCoordinates,
+  isChoiceBySite,
+  setIsChoiceBySite,
+  selectedSite,
+  setSelectedSite,
 }: {
   regionCoordinates: any;
   setRegionCoordinates: any;
+  isChoiceBySite: any;
+  setIsChoiceBySite: any;
+  selectedSite: any;
+  setSelectedSite: any;
 }) {
   // alternates between choosing a site and making a new site
-  const [isChoiceBySite, setIsChoiceBySite] = useState(false);
 
   const [sites, setSites] = useState<
     Array<{
@@ -36,11 +44,16 @@ export default function LocationSelector({
 
   useEffect(() => {
     setIsSitesLoading(true);
-    fetchSites().then(({ sites }) => {
-      setSites(sites);
-      setIsSitesLoading(false);
-    });
-  });
+    fetchSites()
+      .then(({ sites }) => {
+        setSites(sites);
+        setIsSitesLoading(false);
+        console.log;
+      })
+      .catch(() => {
+        console.error("failed to get sites");
+      });
+  }, []);
 
   const [location, setLocation] = useState<null | Location.LocationObject>(
     null
@@ -67,14 +80,12 @@ export default function LocationSelector({
     });
   }
 
-  const [selectedSite, setSelectedSite] = useState<null | number>(null);
-
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          setIsChoiceBySite((bool) => {
+          setIsChoiceBySite((bool: boolean) => {
             if (bool) {
               setSelectedSite(null);
             }
@@ -85,75 +96,87 @@ export default function LocationSelector({
         <Text>{isChoiceBySite ? "New site" : "Existing Site"}</Text>
       </TouchableOpacity>
       {isChoiceBySite ? (
-        <MapView
-          // site map
-          initialRegion={
-            location
-              ? {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                  latitudeDelta: 1,
-                  longitudeDelta: 2,
-                }
-              : undefined
-          }
-          followsUserLocation={true}
-          showsUserLocation={true}
-          style={styles.map}
-        >
-          {sites.map(
-            ({ latitude, longitude, site_id, site_preview_url }) => (
-              // site_preview_url ? (
-              <Marker
-                key={
-                  String(site_id) + (site_id === selectedSite ? "-clicked" : "")
-                }
-                ref={function (this: any, ref) {
-                  this[`markerRef${site_id}`] = ref;
-                }}
-                coordinate={{ latitude, longitude }}
-                onPress={() => {
-                  setSelectedSite(site_id);
-                  setTimeout(function (this: any) {
-                    this[`markerRef${site_id}`].showCallout();
-                  }, 100);
-                }}
-                pinColor={
-                  site_id === selectedSite
-                    ? "orange" //selected
-                    : site_preview_url
-                    ? "red" // has images
-                    : "blue" // no images
-                }
-                zIndex={site_id === selectedSite ? 2 : site_preview_url ? 1 : 0}
-              >
-                {site_preview_url ? (
-                  <Callout
-                    onPress={() => {
-                      console.log(`You just pressed callout ${site_id}!`);
-                    }}
-                  >
-                    <WebView
-                      source={{ uri: site_preview_url || defaultSitePreview }}
-                      style={styles.sitePreviewImg}
-                    />
-                  </Callout>
-                ) : (
-                  <Callout>
-                    <Text>No images here...</Text>
-                  </Callout>
-                )}
-              </Marker>
-            )
-            // ) : (
-            //   <Marker
-            //     pinColor={"blue"}
-            //     coordinate={{ latitude, longitude }}
-            //     key={site_id}
-            //   ></Marker>
-            // )
-          )}
-        </MapView>
+        <>
+          {isSitesLoading ? (
+            <ActivityIndicator
+              size="large"
+              color="#DD614A"
+              style={styles.loadingMap}
+            />
+          ) : null}
+          <MapView
+            // site map
+            initialRegion={
+              location
+                ? {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 1,
+                    longitudeDelta: 2,
+                  }
+                : undefined
+            }
+            followsUserLocation={true}
+            showsUserLocation={true}
+            style={styles.map}
+          >
+            {sites.map(
+              ({ latitude, longitude, site_id, site_preview_url }) => (
+                // site_preview_url ? (
+                <Marker
+                  key={
+                    String(site_id) +
+                    (site_id === selectedSite ? "-clicked" : "")
+                  }
+                  ref={function (this: any, ref) {
+                    this[`markerRef${site_id}`] = ref;
+                  }}
+                  coordinate={{ latitude, longitude }}
+                  onPress={() => {
+                    setSelectedSite(site_id);
+                    setTimeout(function (this: any) {
+                      this[`markerRef${site_id}`].showCallout();
+                    }, 100);
+                  }}
+                  pinColor={
+                    site_id === selectedSite
+                      ? "orange" //selected
+                      : site_preview_url
+                      ? "red" // has images
+                      : "blue" // no images
+                  }
+                  zIndex={
+                    site_id === selectedSite ? 2 : site_preview_url ? 1 : 0
+                  }
+                >
+                  {site_preview_url ? (
+                    <Callout
+                      onPress={() => {
+                        console.log(`You just pressed callout ${site_id}!`);
+                      }}
+                    >
+                      <WebView
+                        source={{ uri: site_preview_url || defaultSitePreview }}
+                        style={styles.sitePreviewImg}
+                      />
+                    </Callout>
+                  ) : (
+                    <Callout>
+                      <Text>No images here...</Text>
+                    </Callout>
+                  )}
+                </Marker>
+              )
+              // ) : (
+              //   <Marker
+              //     pinColor={"blue"}
+              //     coordinate={{ latitude, longitude }}
+              //     key={site_id}
+              //   ></Marker>
+              // )
+            )}
+          </MapView>
+        </>
       ) : (
         //dragable pin
         <MapView
@@ -208,5 +231,15 @@ const styles = StyleSheet.create({
   sitePreviewImg: {
     width: screenWidth / 6,
     height: screenWidth / 6,
+  },
+  loadingMap: {
+    position: "absolute",
+    zIndex: 1,
+    scaleX: 2,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    transform: [{ scale: 3 }],
   },
 });

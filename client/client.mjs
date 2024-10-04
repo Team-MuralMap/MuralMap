@@ -61,3 +61,10 @@ export const createPostAndSite = async (photoPayload, sitePayload) => {
     .then(({ data }) => data)
     .catch(defaultCatch);
 };
+
+export const createPostOnSite = async (photoPayload) => {
+  return apiClient
+    .post("posts", { ...photoPayload, created_at: Date.now() })
+    .then(({ data }) => data)
+    .catch(defaultCatch);
+};
