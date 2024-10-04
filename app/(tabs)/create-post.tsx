@@ -7,21 +7,20 @@ import {
   TouchableOpacity,
   View,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import * as ImagePicker from "expo-image-picker";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { UserContext } from "@/contexts/UserContext";
+import { router } from "expo-router";
 
 export default function createPost() {
   const [facing, setFacing] = useState<CameraType>("back");
-  const [photo, setPhoto] = useState<string>("");
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<any>(null);
-  const { loggedInUser, setLoggedInUser } = useContext(UserContext);
-  console.log("logged in user in create-post:", loggedInUser);
+  const [isTakenPhotoLoading, setIsTakenPhotoLoading] = useState(false);
 
   if (!permission) {
     return <View />;
@@ -42,7 +41,14 @@ export default function createPost() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
+  async function goToPublishPhoto(photoUri: string) {
+    if (photoUri) {
+      router.push({ pathname: "/publish-post", params: { photoUri } });
+    }
+  }
+  // next 2 asyncs set photo URI
   async function takePhoto() {
+    setIsTakenPhotoLoading(true);
     if (cameraRef.current) {
       try {
         // Capture the photo and get its URI
@@ -69,11 +75,13 @@ export default function createPost() {
         );
 
         // Update state with the cropped photo URI
-        setPhoto(croppedPhoto.uri);
+        setIsTakenPhotoLoading(false);
+        goToPublishPhoto(croppedPhoto.uri);
       } catch (error) {
         console.error("Error taking photo:", error);
       }
     }
+    setIsTakenPhotoLoading(false);
   }
 
   async function pickImage() {
@@ -88,55 +96,15 @@ export default function createPost() {
       if (!result.canceled) {
         const croppedImage = await ImageManipulator.manipulateAsync(
           result.assets[0].uri,
-          [{ resize: { width: 100, height: 100 } }],
+          [{ resize: { width: 1080, height: 1080 } }],
           { compress: 1, format: ImageManipulator.SaveFormat.PNG }
         );
 
-        // Update state with the selected image
-        setPhoto(croppedImage.uri);
+        setIsTakenPhotoLoading(false);
+        goToPublishPhoto(croppedImage.uri);
       }
     } catch (error) {
       console.error("Error picking image:", error);
-    }
-  }
-
-  async function publishPost() {
-    const formData = new FormData();
-    const cloudName = "drfu0sqz0";
-
-    const fileType = photo.split(".").at(-1);
-
-    const file: any = {
-      uri: photo,
-      name: `photo.${fileType}`,
-      type: `image/${fileType}`,
-    };
-
-    formData.append("file", file); // ignore this warning
-    formData.append("upload_preset", "upload_preset");
-    formData.append("folder", "postImages");
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      // this is the url of the image now in cloud storage
-      const photoUrl = data.secure_url;
-      console.log(photoUrl);
-
-      // post request to be made here
-    } catch (error) {
-      console.error("Error uploading image:", error);
     }
   }
 
@@ -151,25 +119,20 @@ export default function createPost() {
           <Fontisto name="spinner-refresh" size={24} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.bigbutton} onPress={takePhoto}>
-          <MaterialIcons name="camera" size={54} color="white" />
-        </TouchableOpacity>
+        {isTakenPhotoLoading ? (
+          <View style={styles.bigbutton}>
+            <ActivityIndicator size="large" color="#ffffff" />
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.bigbutton} onPress={takePhoto}>
+            <MaterialIcons name="camera" size={54} color="white" />
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity style={styles.button} onPress={pickImage}>
           <AntDesign name="upload" size={24} color="white" />
         </TouchableOpacity>
       </View>
-
-      {photo ? (
-        <View>
-          <Image source={{ uri: photo }} style={styles.photo} />
-          <TouchableOpacity style={styles.button} onPress={publishPost}>
-            <Text>Post</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
-      <Text></Text>
     </View>
   );
 }

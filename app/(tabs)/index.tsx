@@ -11,11 +11,10 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { fetchSites } from "@/client/client.mjs";
 import WebView from "react-native-webview";
+const defaultSitePreview =
+  "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0f7bfb63-2a9d-4b1e-bdf6-08be9a3482fd/width=450/view-129-gigapixel-art-scale-2_00x.jpeg";
 
 export default function Index() {
-  const defaultSitePreview =
-    "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0f7bfb63-2a9d-4b1e-bdf6-08be9a3482fd/width=450/view-129-gigapixel-art-scale-2_00x.jpeg";
-
   const [location, setLocation] = useState<null | Location.LocationObject>(
     null
   );
@@ -40,6 +39,7 @@ export default function Index() {
       longitude: number;
       site_id: number;
       site_preview_url: null | string;
+      post_id: number;
     }>
   >([]);
   const [isSitesLoading, setIsSitesLoading] = useState(true);
@@ -50,7 +50,7 @@ export default function Index() {
       setSites(sites);
       setIsSitesLoading(false);
     });
-  });
+  }, []);
 
   if (Platform.OS === "android" || Platform.OS === "ios") {
     return (
