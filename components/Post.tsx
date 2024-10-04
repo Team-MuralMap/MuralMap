@@ -1,9 +1,19 @@
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import { convertDateShort } from "../client/utils";
+import { useRouter } from "expo-router";
 
 export default function Post({
-  post: { user_id, body, img_url, created_at, post_id, site_id },
+  post,
   author = { username: "<loading...>" },
+  city,
 }: {
   post: {
     user_id: number;
@@ -14,16 +24,34 @@ export default function Post({
     site_id: number;
   };
   author: any;
+  city: string;
 }) {
+  const { body, img_url, created_at } = post;
+  const router = useRouter();
+
   return (
     <>
       <View style={styles.userContainer}>
-        <Image src={author.avatar_url} style={styles.avatar} />
+        <Image source={{ uri: author.avatar_url }} style={styles.avatar} />
         <Text style={styles.username}>{author.username}</Text>
+        <Text>{city}</Text>
       </View>
-      <Image src={img_url} style={styles.image} />
-      <Text> {body}</Text>
-      <Text>{convertDateShort(created_at)}</Text>
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: "/view-post",
+            params: {
+              post: JSON.stringify(post),
+              author: JSON.stringify(author),
+              city: city,
+            },
+          })
+        }
+      >
+        <Image source={{ uri: img_url }} style={styles.image} />
+        <Text> {body}</Text>
+        <Text>{convertDateShort(created_at)}</Text>
+      </TouchableOpacity>
     </>
   );
 }

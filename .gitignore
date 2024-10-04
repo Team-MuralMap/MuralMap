@@ -22,3 +22,6 @@ expo-env.d.ts
 # android/ios folders
 android/
 ios/
+
+# IDE settings
+.vscode/
