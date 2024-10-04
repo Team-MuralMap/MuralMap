@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const defaultCatch = (err) => {
-  console.log(err.response.data);
+  console.log(err, " <<-- error here");
+  //console.log(err.response.data, " <<-- error data");
 };
 
 const apiClient = axios.create({
@@ -43,6 +44,6 @@ export const fetchUserByUserId = async (user_id) => {
     const { data } = await apiClient.get(`users/${user_id}`);
     return data;
   } catch (error) {
-      defaultCatch(error);
+    defaultCatch(error);
   }
 };
