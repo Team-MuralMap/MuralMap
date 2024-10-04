@@ -16,7 +16,7 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start", // Ensure the layout starts from the top
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   spacer: {
