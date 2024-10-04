@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Image, ActivityIndicator, FlatList, StyleSheet, Dimensions } from 'react-native';
 import axios from 'axios';
 
-// Define the type for the photo data based on the API response
+
 interface Photo {
   id: string;
-  url: string; // Assuming the API includes a URL for the photo
+  url: string;
 }
 
 const UserPhotos: React.FC = () => {
