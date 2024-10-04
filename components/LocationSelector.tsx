@@ -1,6 +1,12 @@
 import { fetchSites } from "@/client/client.mjs";
 import React, { useEffect, useState } from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as Location from "expo-location";
 import MapView, { Callout, Marker } from "react-native-maps";
 import WebView from "react-native-webview";
@@ -51,7 +57,6 @@ export default function LocationSelector({
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      console.log(location);
     })();
   }, []);
 
@@ -65,7 +70,7 @@ export default function LocationSelector({
   const [selectedSite, setSelectedSite] = useState<null | number>(null);
 
   return (
-    <>
+    <View style={styles.container}>
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
@@ -102,13 +107,13 @@ export default function LocationSelector({
                 key={
                   String(site_id) + (site_id === selectedSite ? "-clicked" : "")
                 }
-                ref={(ref) => {
+                ref={function (this: any, ref) {
                   this[`markerRef${site_id}`] = ref;
                 }}
                 coordinate={{ latitude, longitude }}
                 onPress={() => {
                   setSelectedSite(site_id);
-                  setTimeout(() => {
+                  setTimeout(function (this: any) {
                     this[`markerRef${site_id}`].showCallout();
                   }, 100);
                 }}
@@ -156,7 +161,7 @@ export default function LocationSelector({
           ) : null}
         </MapView>
       )}
-    </>
+    </View>
   );
 }
 
@@ -164,9 +169,12 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+  },
   map: {
     height: screenHeight * 0.3,
-    width: "100%",
+    width: screenWidth,
   },
   button: {
     backgroundColor: "#DD614A",
@@ -179,7 +187,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "absolute",
     zIndex: 1,
-    left: 0,
+    bottom: 10,
+    right: 10,
   },
   sitePreviewImg: {
     width: screenWidth / 6,
