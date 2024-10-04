@@ -117,7 +117,8 @@ export default function LocationSelector({
                     this[`markerRef${site_id}`].showCallout();
                   }, 100);
                 }}
-                pinColor={site_id === selectedSite ? "yellow" : "red"}
+                pinColor={site_id === selectedSite ? "orange" : "red"}
+                zIndex={site_id === selectedSite ? 1 : 0}
               >
                 <Callout
                   onPress={() => {
