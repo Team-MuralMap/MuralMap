@@ -1,5 +1,5 @@
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import {
   Button,
   StyleSheet,
@@ -13,12 +13,15 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import * as ImagePicker from "expo-image-picker";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { UserContext } from "@/contexts/UserContext";
 
 export default function createPost() {
   const [facing, setFacing] = useState<CameraType>("back");
-  const [photo, setPhoto] = useState<string>('');
+  const [photo, setPhoto] = useState<string>("");
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<any>(null);
+  const { loggedInUser, setLoggedInUser } = useContext(UserContext);
+  console.log("logged in user in create-post:", loggedInUser);
 
   if (!permission) {
     return <View />;
@@ -67,7 +70,6 @@ export default function createPost() {
 
         // Update state with the cropped photo URI
         setPhoto(croppedPhoto.uri);
-        
       } catch (error) {
         console.error("Error taking photo:", error);
       }
@@ -100,28 +102,28 @@ export default function createPost() {
 
   async function publishPost() {
     const formData = new FormData();
-    const cloudName = 'drfu0sqz0';
+    const cloudName = "drfu0sqz0";
 
-    const fileType = photo.split('.').at(-1);
+    const fileType = photo.split(".").at(-1);
 
     const file: any = {
       uri: photo,
       name: `photo.${fileType}`,
       type: `image/${fileType}`,
-    }
+    };
 
-    formData.append('file', file); // ignore this warning
-    formData.append('upload_preset', 'upload_preset');
-    formData.append('folder', 'postImages');
+    formData.append("file", file); // ignore this warning
+    formData.append("upload_preset", "upload_preset");
+    formData.append("folder", "postImages");
 
     try {
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
-          method: 'POST',
+          method: "POST",
           body: formData,
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -133,11 +135,9 @@ export default function createPost() {
       console.log(photoUrl);
 
       // post request to be made here
-
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
     }
-
   }
 
   return (
@@ -169,6 +169,7 @@ export default function createPost() {
         </View>
       ) : null}
 
+      <Text></Text>
     </View>
   );
 }
@@ -200,25 +201,25 @@ const styles = StyleSheet.create({
   },
   bigbutton: {
     backgroundColor: "#DD614A",
-  paddingVertical: 10,
-  paddingHorizontal: 10,
-  borderRadius: 80,
-  width: 80,
-  height: 80,
-  justifyContent: "center",
-  alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 80,
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
   },
   button: {
-  backgroundColor: "#DD614A",
-  paddingVertical: 10,
-  paddingHorizontal: 10,
-  borderRadius: 50,
-  width: 50,
-  height: 50,
-  justifyContent: "center",
-  alignItems: "center",
+    backgroundColor: "#DD614A",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 50,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  
+
   text: {
     fontSize: 20,
     fontWeight: "bold",

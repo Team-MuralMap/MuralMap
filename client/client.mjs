@@ -8,9 +8,9 @@ const apiClient = axios.create({
   baseURL: "https://muralmap-api.onrender.com/api",
 });
 
-export const fetchPosts = async () => {
+export const fetchPosts = async (params = {}) => {
   return apiClient
-    .get("posts")
+    .get("posts", { params })
     .then(({ data }) => data)
     .catch(defaultCatch);
 };
