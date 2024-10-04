@@ -23,8 +23,6 @@ export default function publishPhoto() {
     latitude: number;
     longitude: number;
   }>(null);
-  const [isMapBySite, setIsMapBySite] = useState(false);
-  // this will alternate between choosing a site and making a new site
   const { loggedInUser } = useContext(UserContext);
 
   useEffect(() => {
@@ -168,10 +166,6 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderRadius: 5,
     marginBottom: 20,
-  },
-  map: {
-    height: screenHeight * 0.3,
-    width: "100%",
   },
   captionInput: {
     width: "70%",

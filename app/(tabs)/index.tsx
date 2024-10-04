@@ -11,11 +11,10 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { fetchSites } from "@/client/client.mjs";
 import WebView from "react-native-webview";
+const defaultSitePreview =
+  "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0f7bfb63-2a9d-4b1e-bdf6-08be9a3482fd/width=450/view-129-gigapixel-art-scale-2_00x.jpeg";
 
 export default function Index() {
-  const defaultSitePreview =
-    "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0f7bfb63-2a9d-4b1e-bdf6-08be9a3482fd/width=450/view-129-gigapixel-art-scale-2_00x.jpeg";
-
   const [location, setLocation] = useState<null | Location.LocationObject>(
     null
   );
