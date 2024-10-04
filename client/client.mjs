@@ -44,6 +44,7 @@ export const fetchUserByUserId = async (user_id) => {
     return data;
   } catch (error) {
     defaultCatch(error);
+    defaultCatch(error);
   }
 };
 
@@ -67,4 +68,13 @@ export const createPostOnSite = async (photoPayload) => {
     .post("posts", { ...photoPayload, created_at: Date.now() })
     .then(({ data }) => data)
     .catch(defaultCatch);
+};
+
+export const fetchSiteBySiteId = async (site_id) => {
+  try {
+    const { data } = await apiClient.get(`sites/${site_id}`);
+    return data;
+  } catch (error) {
+    defaultCatch(error);
+  }
 };
