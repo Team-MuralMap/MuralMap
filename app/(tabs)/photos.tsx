@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { fetchPosts, fetchUsers } from "../../client/client.mjs";
 import Post from "@/components/Post";
 
 export default function Photos() {
   const [posts, setPosts] = useState<any>([]);
   const [isPostsLoading, setIsPostsLoading] = useState(true);
-
   const [users, setUsers] = useState<any>([]);
   const [isUsersLoading, setIsUsersLoading] = useState(true);
 
@@ -25,22 +29,13 @@ export default function Photos() {
   }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <View style={styles.container}>
       <Text style={{ marginTop: 100 }}>Here are the posts:</Text>
       {isPostsLoading || isUsersLoading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          contentContainerStyle={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          contentContainerStyle={styles.flatListContent}
           data={posts}
           renderItem={({ item }) => {
             const author = users.find(
@@ -59,6 +54,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 0,
+  },
+  flatListContent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
