@@ -64,10 +64,25 @@ export const createPostAndSite = async (photoPayload, sitePayload) => {
     .catch(defaultCatch);
 };
 
+export const createPostOnSite = async (photoPayload) => {
+  return apiClient
+    .post("posts", { ...photoPayload, created_at: Date.now() })
+    .then(({ data }) => data)
+    .catch(defaultCatch);
+};
+
 export const fetchSiteBySiteId = async (site_id) => {
   try {
     const { data } = await apiClient.get(`sites/${site_id}`);
     return data;
+  } catch (error) {
+    defaultCatch(error);
+  }
+};
+
+export const deletePostByPostId = async (post_id) => {
+  try {
+    await apiClient.delete(`posts/${post_id}`);
   } catch (error) {
     defaultCatch(error);
   }

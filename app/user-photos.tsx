@@ -20,8 +20,11 @@ const UserPhotos: React.FC = () => {
 
     fetchPosts({ user_id: 1 })
       .then(({ posts }) => {
+        const sortedPosts = posts.sort(
+          (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
         console.log(posts);
-        setPhotos(posts);
+        setPhotos(sortedPosts);
         setLoading(false);
       })
       .catch((err) => {
@@ -29,21 +32,6 @@ const UserPhotos: React.FC = () => {
         setLoading(false);
       });
 
-    // const fetchPhotos = async () => {
-    //   try {
-    //     // Replace this URL with the actual endpoint for the user's photos
-    //     const response = await axios.get<Photo[]>(
-    //       "https://muralmap-api.onrender.com/api/users/1/photos"
-    //     );
-    //     setPhotos(response.data);
-    //     setLoading(false);
-    //   } catch (err) {
-    //     setError("Failed to fetch photos");
-    //     setLoading(false);
-    //   }
-    // };
-
-    // fetchPhotos();
   }, []);
 
   if (loading) {
@@ -70,8 +58,8 @@ const UserPhotos: React.FC = () => {
         renderItem={({ item }) => (
           <Image src={item.img_url} style={styles.photo} />
         )}
-        numColumns={3} // Number of columns in the grid
-        columnWrapperStyle={styles.row} // Style for each row
+        numColumns={3}
+        columnWrapperStyle={styles.row}
       />
     </View>
   );
@@ -80,8 +68,9 @@ const UserPhotos: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '97%',
     padding: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#f2f2f2",
   },
   loadingContainer: {
     flex: 1,
@@ -94,13 +83,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photo: {
-    width: "30%", // Width of each photo, adjust as necessary
-    height: 100, // Height of each photo
-    margin: 5, // Margin around each photo
-    borderRadius: 8, // Optional: Rounded corners for the photos
+    width: "30%",
+    height: 100,
+    margin: 5,
+    borderRadius: 8,
   },
   row: {
-    justifyContent: "space-between", // Space between items in a row
+    justifyContent: "space-between",
   },
 });
 

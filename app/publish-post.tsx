@@ -1,4 +1,4 @@
-import { createPostAndSite } from "@/client/client.mjs";
+import { createPostAndSite, createPostOnSite } from "@/client/client.mjs";
 import { UserContext } from "@/contexts/UserContext";
 import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -23,9 +23,13 @@ export default function publishPhoto() {
     latitude: number;
     longitude: number;
   }>(null);
-  const [isMapBySite, setIsMapBySite] = useState(false);
-  // this will alternate between choosing a site and making a new site
   const { loggedInUser } = useContext(UserContext);
+  const [isImageBig, setIsImageBig] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // form:
+  const [isChoiceBySite, setIsChoiceBySite] = useState(true);
+  const [selectedSite, setSelectedSite] = useState<null | number>(null);
 
   useEffect(() => {
     // Get users location on load (load of app?) and push it to regionCoordinates for initalRegion
@@ -73,22 +77,46 @@ export default function publishPhoto() {
   }
 
   async function postPhoto({ img_url }: { img_url: string }) {
-    const photoPayload = {
-      user_id: loggedInUser.user_id,
-      img_url,
-      body: caption,
-    };
-    const sitePayload = { ...regionCoordinates, user_id: loggedInUser.user_id };
+    let post: any = {};
     try {
-      const { post } = await createPostAndSite(photoPayload, sitePayload);
+      if (isChoiceBySite) {
+        const photoPayload = {
+          user_id: loggedInUser.user_id,
+          img_url,
+          body: caption,
+          site_id: selectedSite,
+        };
+
+        const newPostResponse = await createPostOnSite(photoPayload);
+        post = newPostResponse.post;
+      } else {
+        const photoPayload = {
+          user_id: loggedInUser.user_id,
+          img_url,
+          body: caption,
+        };
+        const sitePayload = {
+          ...regionCoordinates,
+          user_id: loggedInUser.user_id,
+        };
+        const newPostResponse = await createPostAndSite(
+          photoPayload,
+          sitePayload
+        );
+        post = newPostResponse.post;
+      }
       console.log("This will need changing for diff route: post/:post_id");
-      router.push({
-        pathname: "/view-post",
-        params: {
-          post: JSON.stringify(post), // Now post is accessible
-          author: JSON.stringify(loggedInUser),
-        },
-      });
+      //CODE FOR REROUTING ONCE ROUTERS ARE BETTER
+
+      // router.push({
+      //   pathname: "/view-post",
+      //   params: {
+      //     post: JSON.stringify(post), // Now post is accessible
+      //     author: JSON.stringify(loggedInUser),
+      //   },
+      // });
+
+      router.push("/photos");
     } catch {
       console.error("Error posting photo to database");
       setIsPhotoPosting(false);
@@ -99,10 +127,17 @@ export default function publishPhoto() {
     <View style={styles.container}>
       {photoUri ? (
         <>
-          <Image source={{ uri: photoUri }} style={styles.photo} />
+          <Image
+            source={{ uri: photoUri }}
+            style={isImageBig ? styles.bigPhoto : styles.smallPhoto}
+          />
           <LocationSelector
             regionCoordinates={regionCoordinates}
             setRegionCoordinates={setRegionCoordinates}
+            isChoiceBySite={isChoiceBySite}
+            setIsChoiceBySite={setIsChoiceBySite}
+            selectedSite={selectedSite}
+            setSelectedSite={setSelectedSite}
           />
           <TextInput
             style={styles.captionInput}
@@ -120,13 +155,26 @@ export default function publishPhoto() {
                 <ActivityIndicator size="large" color="#ffffff" />
               </View>
             ) : (
-              <TouchableOpacity style={styles.button} onPress={uploadPhoto}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  if (
+                    caption &&
+                    (regionCoordinates || (isChoiceBySite && selectedSite))
+                  ) {
+                    uploadPhoto();
+                  } else {
+                    setErrorMsg("Please choose a location and caption");
+                  }
+                }}
+              >
                 <Text>Post</Text>
               </TouchableOpacity>
             )}
           </View>
         </>
       ) : null}
+      {errorMsg ? <Text>{errorMsg}</Text> : null}
     </View>
   );
 }
@@ -160,18 +208,25 @@ const styles = StyleSheet.create({
     width: screenWidth,
     marginTop: 20,
   },
-  photo: {
-    width: screenWidth * 0.9,
-    height: screenWidth * 0.9,
+  smallPhoto: {
+    width: screenWidth * 0.5,
+    height: screenWidth * 0.5,
     borderColor: "#DD614A",
     borderStyle: "solid",
     borderWidth: 5,
     borderRadius: 5,
     marginBottom: 20,
   },
-  map: {
-    height: screenHeight * 0.3,
-    width: "100%",
+  bigPhoto: {
+    position: "absolute",
+    width: screenWidth * 0.9,
+    height: screenWidth * 0.9,
+    left: screenWidth * 0.05,
+    borderColor: "green",
+    borderStyle: "solid",
+    borderWidth: 5,
+    borderRadius: 5,
+    marginBottom: 20,
   },
   captionInput: {
     width: "70%",
