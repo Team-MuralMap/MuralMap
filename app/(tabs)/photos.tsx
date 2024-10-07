@@ -93,11 +93,36 @@ export default function Photos() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f5f5",
     justifyContent: "center",
     alignItems: "center",
+    padding: 10,
   },
   flatListContent: {
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 10,
+  },
+  postContainer: {
+    backgroundColor: "#fff", 
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 8,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3, // Android shadow
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#555",
   },
 });
