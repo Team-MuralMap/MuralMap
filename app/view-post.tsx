@@ -3,9 +3,9 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import CommentsSection from "../components/CommentsSection";
 import { useState, useEffect, useContext } from "react";
 import {
+  deletePostByPostId,
   fetchCommentsByPostId,
   fetchUserByUserId,
-  deletePostByPostId,
 } from "@/client/client.mjs";
 import { UserContext } from "@/contexts/UserContext";
 import { StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
@@ -72,7 +72,10 @@ export default function ViewPost() {
           onPress: async () => {
             try {
               await deletePostByPostId(JSON.parse(post).post_id);
-              router.push("/(tabs)/photos");
+              router.push({
+                pathname: "/(tabs)/photos",
+                params: { deletedPostId: JSON.parse(post).post_id },
+              });
             } catch (error) {
               console.error("Error deleting post:", error);
             }
@@ -87,13 +90,11 @@ export default function ViewPost() {
   return (
     <>
       <Post post={JSON.parse(post)} author={JSON.parse(author)} city={city} />
-      {
-        /*loggedInUser.user_id === JSON.parse(post).user_id*/ true && (
-          <TouchableOpacity style={styles.button} onPress={deletePost}>
-            <Fontisto name="trash" size={24} color="white" />
-          </TouchableOpacity>
-        )
-      }
+      {loggedInUser.user_id === JSON.parse(post).user_id && (
+        <TouchableOpacity style={styles.button} onPress={deletePost}>
+          <Fontisto name="trash" size={24} color="white" />
+        </TouchableOpacity>
+      )}
       <CommentsSection comments={comments} commentAuthors={commentAuthors} />
     </>
   );

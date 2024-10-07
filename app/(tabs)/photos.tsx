@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   fetchPosts,
   fetchUsers,
@@ -21,6 +22,8 @@ async function getCityByCoordinates(
         data.address.city || data.address.town || data.address.village || "";
       return city;
     } else {
+      console.log(url);
+      console.log(data);
       return "";
     }
   } catch (error) {
@@ -42,11 +45,11 @@ export default function Photos() {
   const [isUsersLoading, setIsUsersLoading] = useState(true);
   const [cities, setCities] = useState<{ [postId: string]: string }>({});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsPostsLoading(true);
-      setIsUsersLoading(true);
+  const fetchData = async () => {
+    setIsPostsLoading(true);
+    setIsUsersLoading(true);
 
+    try {
       const [{ posts }, { users }] = await Promise.all([
         fetchPosts(),
         fetchUsers(),
@@ -57,14 +60,24 @@ export default function Photos() {
       setIsPostsLoading(false);
       setIsUsersLoading(false);
 
-      posts.forEach(async (post: { site_id: string; post_id: any }) => {
-        const city = await fetchCityForSite(post.site_id);
-        setCities((prevCities) => ({ ...prevCities, [post.post_id]: city }));
-      });
-    };
+      const citiesMap: { [postId: string]: string } = {};
 
-    fetchData();
-  }, []);
+      for (const post of posts) {
+        const city = await fetchCityForSite(post.site_id);
+        citiesMap[post.post_id] = city;
+      }
+
+      setCities(citiesMap);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -80,7 +93,11 @@ export default function Photos() {
               (user: any) => user.user_id === item.user_id
             );
             const city = cities[item.post_id];
-            return <Post post={item} author={author} city={city} />;
+            return (
+              <View>
+                <Post post={item} author={author} city={city} />
+              </View>
+            );
           }}
         />
       )}
