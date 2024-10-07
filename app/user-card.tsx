@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ActivityIndicator, StyleSheet } from 'react-native';
 import axios from 'axios';
 
-// Define the type for the user data based on the API response
+
 interface User {
-  id: string;
-  name: string;
+  user_id: number;
+  username: string;
   email: string;
-  avatarUrl: string; // Assuming the API includes an avatar URL
+  name: string;
+  avatar_url: string;
 }
 
 const UserCard: React.FC = () => {
@@ -16,12 +17,11 @@ const UserCard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch the logged-in user's data
+   
     const fetchUser = async () => {
       try {
-        // Replace this URL with the actual endpoint for the logged-in user
-        const response = await axios.get<User>('https://muralmap-api.onrender.com/api/users/1'); 
-        setUser(response.data);
+        const response = await axios.get<{ user: User }>('https://muralmap-api.onrender.com/api/users/1');
+        setUser(response.data.user); 
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch user');
@@ -58,9 +58,11 @@ const UserCard: React.FC = () => {
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
+      <Image source={{ uri: user.avatar_url }} style={styles.avatar} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.username}>@{user.username}</Text>
+        <Text style={styles.email}>{user.email}</Text>
       </View>
     </View>
   );
@@ -72,12 +74,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 20,
     margin: 10,
-    flexDirection: 'row', // Row for landscape layout
-    alignItems: 'center', // Center items vertically
-    width: '90%', // Width of the card
-    height: 100, // Fixed height for the landscape rectangle
-    shadowColor: '#000', // Optional: Add shadow for a more elevated look
-    shadowOffset: { width: 0, height: 1 }, // Shadow properties
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    width: '90%', 
+    height: 130,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2, // For Android shadow support
@@ -86,21 +88,27 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    marginRight: 15, // Space between avatar and text
-    borderWidth: 2, // Optional: Add border for better visibility
-    borderColor: '#fff', // Optional: White border color
+    marginRight: 15,
+    borderWidth: 2,
+    borderColor: '#DD614A', 
   },
   infoContainer: {
-    flex: 1, // Allow the info container to take the remaining space
+    flex: 1,
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff', // White text color for visibility
+    color: '#ffffff',
+  },
+  username: {
+    fontSize: 16,
+    color: '#ffffff',
+    marginTop: 4,
   },
   email: {
     fontSize: 14,
-    color: '#ffffff', // White text color for visibility
+    color: '#ffffff',
+    marginTop: 4,
   },
   loadingContainer: {
     flex: 1,
