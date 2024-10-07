@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Text, View, ScrollView } from "react-native";
+import { Text, View, ScrollView, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   fetchPosts,
@@ -62,10 +62,14 @@ export default function Photos() {
 
       const citiesMap: { [postId: string]: string } = {};
 
-      for (const post of posts) {
-        const city = await fetchCityForSite(post.site_id);
-        citiesMap[post.post_id] = city;
-      }
+      const cityPromises = posts.map(
+        async (post: { site_id: string; post_id: string | number }) => {
+          const city = await fetchCityForSite(post.site_id);
+          citiesMap[post.post_id] = city;
+        }
+      );
+
+      await Promise.all(cityPromises);
 
       setCities(citiesMap);
     } catch (error) {
@@ -73,7 +77,7 @@ export default function Photos() {
     }
   };
 
-  // this makes sure it refreshes when we return to it (e.g. after post creation/deletion)
+  // Ensures it refreshes when we return to it (e.g. after post creation/deletion)
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -91,11 +95,18 @@ export default function Photos() {
               (user: any) => user.user_id === item.user_id
             );
             const city = cities[item.post_id];
-            return <Post post={item} author={author} city={city} />;
-          }}
-        />
+            return (
+              <Post
+                key={item.post_id}
+                post={item}
+                author={author}
+                city={city}
+              />
+            );
+          })}
+        </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -113,7 +124,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   postContainer: {
-    backgroundColor: "#fff", 
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 15,
     marginVertical: 8,
