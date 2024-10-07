@@ -8,7 +8,7 @@ import {
   fetchUserByUserId,
 } from "@/client/client.mjs";
 import { UserContext } from "@/contexts/UserContext";
-import { StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
+import { StyleSheet, TouchableOpacity, Alert } from "react-native";
 import Fontisto from "@expo/vector-icons/Fontisto";
 
 export default function ViewPost() {
@@ -72,10 +72,7 @@ export default function ViewPost() {
           onPress: async () => {
             try {
               await deletePostByPostId(JSON.parse(post).post_id);
-              router.push({
-                pathname: "/(tabs)/photos",
-                params: { deletedPostId: JSON.parse(post).post_id },
-              });
+              router.push("/(tabs)/photos");
             } catch (error) {
               console.error("Error deleting post:", error);
             }

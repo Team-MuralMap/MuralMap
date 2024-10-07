@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Text, View, ScrollView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   fetchPosts,
@@ -73,6 +73,7 @@ export default function Photos() {
     }
   };
 
+  // this makes sure it refreshes when we return to it (e.g. after post creation/deletion)
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -80,39 +81,24 @@ export default function Photos() {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView>
       {isPostsLoading || isUsersLoading ? (
         <Text>Loading...</Text>
       ) : (
-        <FlatList
-          contentContainerStyle={styles.flatListContent}
-          data={posts}
-          keyExtractor={(item) => item.post_id.toString()}
-          renderItem={({ item }) => {
+        <View>
+          {posts.map((item) => {
             const author = users.find(
               (user: any) => user.user_id === item.user_id
             );
             const city = cities[item.post_id];
             return (
-              <View>
+              <View key={item.post_id}>
                 <Post post={item} author={author} city={city} />
               </View>
             );
-          }}
-        />
+          })}
+        </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  flatListContent: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
