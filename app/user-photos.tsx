@@ -20,8 +20,11 @@ const UserPhotos: React.FC = () => {
 
     fetchPosts({ user_id: 1 })
       .then(({ posts }) => {
+        const sortedPosts = posts.sort(
+          (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
         console.log(posts);
-        setPhotos(posts);
+        setPhotos(sortedPosts);
         setLoading(false);
       })
       .catch((err) => {
