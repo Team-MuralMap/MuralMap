@@ -1,5 +1,11 @@
 import { useState, useCallback } from "react";
-import { Text, View, ScrollView, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   fetchPosts,
@@ -11,6 +17,7 @@ import { Collapsible } from "@/components/Collapsible";
 import SelectDropdown from "react-native-select-dropdown";
 import { Ionicons } from "@expo/vector-icons";
 import { PhotoFilters } from "@/components/PhotoFiltering";
+import { useRouter } from "expo-router";
 
 export default function Photos() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -22,6 +29,8 @@ export default function Photos() {
     sort_by: "created_at",
     order: "desc",
   });
+
+  const router = useRouter();
 
   const fetchData = async (sortQuery: { sort_by: string; order: string }) => {
     setIsPostsLoading(true);
@@ -76,12 +85,19 @@ export default function Photos() {
             );
             const city = cities[item.post_id];
             return (
-              <Post
+              <TouchableOpacity
+                onPress={() => {
+                  router.push(`/post/${item.post_id}`);
+                }}
                 key={item.post_id}
-                post={item}
-                author={author}
-                city={city}
-              />
+              >
+                <Post
+                  key={item.post_id}
+                  post={item}
+                  author={author}
+                  city={city}
+                />
+              </TouchableOpacity>
             );
           })}
         </View>

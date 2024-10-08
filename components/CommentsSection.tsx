@@ -5,30 +5,37 @@ export default function CommentsSection({ comments, commentAuthors }: any) {
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleString();
-  }; 
+  };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       {comments === undefined || comments.length === 0 ? (
         <Text style={styles.noCommentsText}>No comments yet.</Text>
       ) : (
         comments.map((comment: any) => {
-          const author = commentAuthors.find((author: any) => author.user.user_id === comment.user_id);
+          const author = commentAuthors.find(
+            (author: any) => author.user.user_id === comment.user_id
+          );
           return (
             <View key={comment.comment_id} style={styles.commentContainer}>
               {author !== undefined && (
                 <View style={styles.authorContainer}>
-                  <Image source={{ uri: author.user.avatar_url }} style={styles.avatar} />
+                  <Image
+                    source={{ uri: author.user.avatar_url }}
+                    style={styles.avatar}
+                  />
                   <Text style={styles.username}>{author.user.username}</Text>
                 </View>
               )}
               <Text style={styles.commentBody}>{comment.body}</Text>
-              <Text style={styles.commentTime}>{formatDate(comment.created_at)}</Text>
+              <Text style={styles.commentTime}>
+                {formatDate(comment.created_at)}
+              </Text>
             </View>
           );
         })
       )}
-    </ScrollView>
+    </View>
   );
 }
 
