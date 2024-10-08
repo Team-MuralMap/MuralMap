@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     width: 0.3 * (screenWidth - 30),
     height: 0.3 * (screenWidth - 30),
     margin: 5,
-    borderRadius: 8,
+    borderRadius: 0,
   },
   row: {
     justifyContent: "space-between",
