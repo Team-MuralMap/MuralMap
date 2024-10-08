@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -88,19 +89,20 @@ export default function Photos() {
             );
             const city = cities[item.post_id];
             return (
-              <TouchableOpacity
-                onPress={() => {
-                  router.push(`/post/${item.post_id}`);
-                }}
-                key={item.post_id}
-              >
-                <Post
-                  key={item.post_id}
-                  post={item}
-                  author={author}
-                  city={city}
-                />
-              </TouchableOpacity>
+              <View style={styles.postContainer} key={item.post_id}>
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push(`/post/${item.post_id}`);
+                  }}
+                >
+                  <Post
+                    key={item.post_id}
+                    post={item}
+                    author={author}
+                    city={city}
+                  />
+                </TouchableOpacity>
+              </View>
             );
           })}
         </View>
@@ -109,6 +111,9 @@ export default function Photos() {
   );
 }
 
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,36 +121,15 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
   },
-  flatListContent: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 0,
-    paddingTop: 50,
-  },
   postContainer: {
     marginBottom: 0,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     paddingBottom: 10,
-    paddingTop: 50,
-  },
-  usernameText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  cityText: {
-    // Add a new style for the city text
-    fontSize: 14,
-    color: "#DD614A", // Set the city color
-  },
-  postTime: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 5,
-    textAlign: "right",
+    paddingTop: 20,
   },
   loadingContainer: {
+    marginTop: screenHeight / 2.3,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

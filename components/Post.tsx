@@ -48,7 +48,7 @@ export default function Post({
             <View style={styles.cityContainer}>
               <MaterialCommunityIcons
                 name="map-marker-outline"
-                size={18}
+                size={screenWidth / 24}
                 style={styles.locationIcon}
               />
               <Text style={styles.city}>{city}</Text>
@@ -94,11 +94,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   username: {
-    fontSize: 16,
+    fontSize: screenWidth / 24,
     fontWeight: "bold",
   },
   city: {
     color: "#DD614A",
+    fontSize: screenWidth / 32,
   },
   body: {
     padding: 20,
