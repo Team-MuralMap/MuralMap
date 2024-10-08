@@ -7,6 +7,10 @@ import {
   fetchCityForSite,
 } from "../../client/client.mjs";
 import Post from "@/components/Post";
+import { Collapsible } from "@/components/Collapsible";
+import SelectDropdown from "react-native-select-dropdown";
+import { Ionicons } from "@expo/vector-icons";
+import { PhotoFilters } from "@/components/PhotoFiltering";
 
 export default function Photos() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -14,14 +18,18 @@ export default function Photos() {
   const [users, setUsers] = useState<any[]>([]);
   const [isUsersLoading, setIsUsersLoading] = useState(true);
   const [cities, setCities] = useState<{ [postId: string]: string }>({});
+  const [sortQuery, setSortQuery] = useState({
+    sort_by: "created_at",
+    order: "desc",
+  });
 
-  const fetchData = async () => {
+  const fetchData = async (sortQuery: { sort_by: string; order: string }) => {
     setIsPostsLoading(true);
     setIsUsersLoading(true);
 
     try {
       const [{ posts }, { users }] = await Promise.all([
-        fetchPosts(),
+        fetchPosts({ ...sortQuery }),
         fetchUsers(),
       ]);
 
@@ -50,12 +58,14 @@ export default function Photos() {
   // Ensures it refreshes when we return to it (e.g. after post creation/deletion)
   useFocusEffect(
     useCallback(() => {
-      fetchData();
-    }, [])
+      fetchData(sortQuery);
+    }, [sortQuery])
   );
 
   return (
     <ScrollView>
+      <PhotoFilters setSortQuery={setSortQuery} sortQuery={sortQuery} />
+
       {isPostsLoading || isUsersLoading ? (
         <Text>Loading...</Text>
       ) : (
