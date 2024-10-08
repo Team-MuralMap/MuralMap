@@ -115,16 +115,10 @@ export default function TabLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name="publish-post"
         options={{ href: null, title: "New Post" }}
       />
-      <Tabs.Screen
-        name="view-post"
-        options={{ href: null, title: "View post" }}
-      />
-
       <Tabs.Screen
         name="post/[post_id]"
         options={{ href: null, title: "View post" }}
