@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
     backgroundColor: "grey",
   },
   textContainer: {
-    position: "relative",
+    position: "absolute",
     left: screenWidth / 8 + screenWidth / 16,
-    top: 4 - screenWidth / 8,
+    top: 5,
     marginBottom: 7 - screenWidth / 8,
     flex: 1,
     flexDirection: "column",
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   cityContainer: { flex: 1, flexDirection: "row" },
   locationIcon: {
-    marginHorizontal: 3,
+    marginRight: 3,
   },
   city: {
     fontSize: 14,
