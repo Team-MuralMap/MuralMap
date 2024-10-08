@@ -2,6 +2,7 @@ import React from "react";
 import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { convertDateShort } from "../client/utils";
 import { useRouter } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // Custom function to format the date
 const formatDate = (timestamp: string) => {
