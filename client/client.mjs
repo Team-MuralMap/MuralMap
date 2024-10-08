@@ -120,3 +120,12 @@ export async function fetchCityForSite(site_id) {
   const city = await getCityByCoordinates(site.latitude, site.longitude);
   return city;
 }
+
+export const addComment = async (post_id, user_id, body) => {
+  const comment = { body: body,  user_id: user_id};
+
+  return apiClient
+    .post(`/posts/${post_id}/comments`, comment)
+    .then(({ data }) => data)
+    .catch(defaultCatch);
+};

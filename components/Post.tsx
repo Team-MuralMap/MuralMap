@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { convertDateShort } from "../client/utils";
-import { useRouter } from "expo-router";
 const defaultAuthorUri = "https://www.flickr.com/photos/loopzilla/2203595978";
 
 export default function Post({
@@ -27,8 +19,7 @@ export default function Post({
   author: any;
   city: string;
 }) {
-  const { body, img_url, created_at, post_id } = post;
-  const router = useRouter();
+  const { body, img_url, created_at } = post;
 
   return (
     <>
@@ -45,17 +36,9 @@ export default function Post({
           <Text>{city}</Text>
         </View>
       )}
-      <TouchableOpacity
-        onPress={() => {
-          router.push({
-            pathname: `/post/${post_id}`,
-          });
-        }}
-      >
-        <Image source={{ uri: img_url }} style={styles.image} />
-        <Text> {body}</Text>
-        <Text>{convertDateShort(created_at)}</Text>
-      </TouchableOpacity>
+      <Image source={{ uri: img_url }} style={styles.image} />
+      <Text> {body}</Text>
+      <Text>{convertDateShort(created_at)}</Text>
     </>
   );
 }
