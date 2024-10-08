@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import LocationSelector from "../components/LocationSelector";
+import LocationSelector from "../../components/LocationSelector";
 
 export default function publishPhoto() {
   const { photoUri } = useLocalSearchParams<{ photoUri: string }>();

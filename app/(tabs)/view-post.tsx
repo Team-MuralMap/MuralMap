@@ -1,6 +1,6 @@
 import Post from "@/components/Post";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import CommentsSection from "../components/CommentsSection";
+import CommentsSection from "../../components/CommentsSection";
 import { useState, useEffect, useContext } from "react";
 import {
   deletePostByPostId,
