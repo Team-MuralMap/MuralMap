@@ -62,7 +62,7 @@ const UserCard: React.FC = () => {
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.username}>@{user.username}</Text>
-        <Text style={styles.email}>{user.email}</Text>
+        
       </View>
     </View>
   );
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2, // For Android shadow support
   },
+  
   avatar: {
     width: 70,
     height: 70,

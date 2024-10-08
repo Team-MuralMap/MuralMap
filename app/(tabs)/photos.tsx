@@ -1,10 +1,12 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Text,
   View,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -13,6 +15,10 @@ import {
   fetchCityForSite,
 } from "../../client/client.mjs";
 import Post from "@/components/Post";
+import { Collapsible } from "@/components/Collapsible";
+import SelectDropdown from "react-native-select-dropdown";
+import { Ionicons } from "@expo/vector-icons";
+import { PhotoFilters } from "@/components/PhotoFiltering";
 import { useRouter } from "expo-router";
 
 export default function Photos() {
@@ -21,16 +27,20 @@ export default function Photos() {
   const [users, setUsers] = useState<any[]>([]);
   const [isUsersLoading, setIsUsersLoading] = useState(true);
   const [cities, setCities] = useState<{ [postId: string]: string }>({});
+  const [sortQuery, setSortQuery] = useState({
+    sort_by: "created_at",
+    order: "desc",
+  });
 
   const router = useRouter();
 
-  const fetchData = async () => {
+  const fetchData = async (sortQuery: { sort_by: string; order: string }) => {
     setIsPostsLoading(true);
     setIsUsersLoading(true);
 
     try {
       const [{ posts }, { users }] = await Promise.all([
-        fetchPosts(),
+        fetchPosts({ ...sortQuery }),
         fetchUsers(),
       ]);
 
@@ -59,14 +69,18 @@ export default function Photos() {
   // Ensures it refreshes when we return to it (e.g. after post creation/deletion)
   useFocusEffect(
     useCallback(() => {
-      fetchData();
-    }, [])
+      fetchData(sortQuery);
+    }, [sortQuery])
   );
 
   return (
     <ScrollView>
+      <PhotoFilters setSortQuery={setSortQuery} sortQuery={sortQuery} />
+
       {isPostsLoading || isUsersLoading ? (
-        <Text>Loading...</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#DD614A" />
+        </View>
       ) : (
         <View>
           {posts.map((item) => {
@@ -75,19 +89,20 @@ export default function Photos() {
             );
             const city = cities[item.post_id];
             return (
-              <TouchableOpacity
-                onPress={() => {
-                  router.push(`/post/${item.post_id}`);
-                }}
-                key={item.post_id}
-              >
-                <Post
-                  key={item.post_id}
-                  post={item}
-                  author={author}
-                  city={city}
-                />
-              </TouchableOpacity>
+              <View style={styles.postContainer} key={item.post_id}>
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push(`/post/${item.post_id}`);
+                  }}
+                >
+                  <Post
+                    key={item.post_id}
+                    post={item}
+                    author={author}
+                    city={city}
+                  />
+                </TouchableOpacity>
+              </View>
             );
           })}
         </View>
@@ -96,39 +111,27 @@ export default function Photos() {
   );
 }
 
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-  },
-  flatListContent: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
+    margin: 0,
+    padding: 0,
   },
   postContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    marginVertical: 8,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3, // Android shadow
+    marginBottom: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingBottom: 10,
+    paddingTop: 20,
   },
   loadingContainer: {
+    marginTop: screenHeight / 2.3,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#555",
   },
 });
