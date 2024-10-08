@@ -4,39 +4,9 @@ import { useFocusEffect } from "@react-navigation/native";
 import {
   fetchPosts,
   fetchUsers,
-  fetchSiteBySiteId,
+  fetchCityForSite,
 } from "../../client/client.mjs";
 import Post from "@/components/Post";
-
-async function getCityByCoordinates(
-  latitude: number,
-  longitude: number
-): Promise<string> {
-  const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`;
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data && data.address) {
-      const city =
-        data.address.city || data.address.town || data.address.village || "";
-      return city;
-    } else {
-      console.log(url);
-      console.log(data);
-      return "";
-    }
-  } catch (error) {
-    console.error("Error fetching city:", error);
-    return "";
-  }
-}
-
-async function fetchCityForSite(site_id: string) {
-  const { site } = await fetchSiteBySiteId(site_id);
-  const city = await getCityByCoordinates(site.latitude, site.longitude);
-  return city;
-}
 
 export default function Photos() {
   const [posts, setPosts] = useState<any[]>([]);

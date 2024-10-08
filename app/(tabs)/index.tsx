@@ -71,27 +71,30 @@ export default function Index() {
           }}
           style={styles.map}
         >
-          {sites.map(({ latitude, longitude, site_id, site_preview_url }) =>
-            site_preview_url ? (
-              <Marker key={site_id} coordinate={{ latitude, longitude }}>
-                <Callout
-                  onPress={() =>
-                    console.log(`You just pressed site ${site_id}!`)
-                  }
-                >
-                  <WebView
-                    source={{ uri: site_preview_url || defaultSitePreview }}
-                    style={styles.sitePreviewImg}
-                  />
-                </Callout>
-              </Marker>
-            ) : (
-              <Marker
-                pinColor={"blue"}
-                coordinate={{ latitude, longitude }}
-                key={site_id}
-              ></Marker>
-            )
+          {sites.map(
+            ({ latitude, longitude, site_id, site_preview_url, post_id }) =>
+              site_preview_url ? (
+                <Marker key={site_id} coordinate={{ latitude, longitude }}>
+                  <Callout
+                    onPress={() =>
+                      console.log(
+                        `You just pressed site ${site_id}! Go to ${post_id}`
+                      )
+                    }
+                  >
+                    <WebView
+                      source={{ uri: site_preview_url || defaultSitePreview }}
+                      style={styles.sitePreviewImg}
+                    />
+                  </Callout>
+                </Marker>
+              ) : (
+                <Marker
+                  pinColor={"blue"}
+                  coordinate={{ latitude, longitude }}
+                  key={site_id}
+                ></Marker>
+              )
           )}
         </MapView>
       </View>

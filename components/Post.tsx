@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { convertDateShort } from "../client/utils";
 import { useRouter } from "expo-router";
+const defaultAuthorUri = "https://www.flickr.com/photos/loopzilla/2203595978";
 
 export default function Post({
   post,
@@ -26,20 +27,28 @@ export default function Post({
   author: any;
   city: string;
 }) {
-  const { body, img_url, created_at } = post;
+  const { body, img_url, created_at, post_id } = post;
   const router = useRouter();
 
   return (
     <>
-      <View style={styles.userContainer}>
-        <Image source={{ uri: author.avatar_url }} style={styles.avatar} />
-        <Text style={styles.username}>{author.username}</Text>
-        <Text>{city}</Text>
-      </View>
+      {author ? (
+        <View style={styles.userContainer}>
+          <Image source={{ uri: author.avatar_url }} style={styles.avatar} />
+          <Text style={styles.username}>{author.username}</Text>
+          <Text>{city}</Text>
+        </View>
+      ) : (
+        <View>
+          <Image source={{ uri: defaultAuthorUri }} style={styles.avatar} />
+          <Text style={styles.username}>loading...</Text>
+          <Text>{city}</Text>
+        </View>
+      )}
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: "/view-post",
+            pathname: `/post/${post_id}`,
             params: {
               post: JSON.stringify(post),
               author: JSON.stringify(author),

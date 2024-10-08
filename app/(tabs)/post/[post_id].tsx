@@ -4,33 +4,61 @@ import CommentsSection from "../../../components/CommentsSection";
 import { useState, useEffect, useContext } from "react";
 import {
   deletePostByPostId,
+  fetchCityForSite,
   fetchCommentsByPostId,
+  fetchPostById,
   fetchUserByUserId,
 } from "@/client/client.mjs";
 import { UserContext } from "@/contexts/UserContext";
-import { StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import Fontisto from "@expo/vector-icons/Fontisto";
 
 export default function ViewPost() {
   const { loggedInUser } = useContext(UserContext);
+  const [post, setPost] = useState<{
+    user_id: number;
+    body: string;
+    img_url: string;
+    created_at: string;
+    post_id: number;
+    site_id: number;
+  } | null>(null);
+  const [author, setAuthor] = useState<any>(null);
+  const [city, setCity] = useState("");
   const [comments, SetComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [commentAuthors, setCommentAuthors] = useState([]);
-  const { post, author, city } = useLocalSearchParams<{
-    post: string;
-    author: string;
-    city: string;
-  }>();
+  const post_id = Number(
+    useLocalSearchParams<{
+      post_id: string;
+    }>().post_id
+  );
 
   const router = useRouter();
+
+  useEffect(() => {
+    fetchPostById(post_id)
+      .then(({ post }) => {
+        setPost(post);
+        return Promise.all([
+          fetchUserByUserId(post.user_id).then(({ user }) => setAuthor(user)),
+          fetchCityForSite(post.site_id).then((city) => setCity(city)),
+        ]);
+      })
+      .catch((err) => console.error(`Loading error: ${err}`));
+  }, []);
 
   useEffect(() => {
     const loadComments = async () => {
       setCommentsLoading(true);
       try {
-        const { comments } = await fetchCommentsByPostId(
-          JSON.parse(post).post_id
-        );
+        const { comments } = await fetchCommentsByPostId(post_id);
         SetComments(comments);
 
         if (comments && comments.length > 0) {
@@ -56,7 +84,7 @@ export default function ViewPost() {
     };
 
     loadComments();
-  }, [post]);
+  }, [post_id]);
 
   function deletePost() {
     Alert.alert(
@@ -71,7 +99,7 @@ export default function ViewPost() {
           text: "Yes",
           onPress: async () => {
             try {
-              await deletePostByPostId(JSON.parse(post).post_id);
+              await deletePostByPostId(post_id);
               router.push("/(tabs)/photos");
             } catch (error) {
               console.error("Error deleting post:", error);
@@ -86,8 +114,13 @@ export default function ViewPost() {
 
   return (
     <>
-      <Post post={JSON.parse(post)} author={JSON.parse(author)} city={city} />
-      {loggedInUser.user_id === JSON.parse(post).user_id && (
+      <Text>NEW</Text>
+      {post ? (
+        <Post post={post} author={author} city={city} />
+      ) : (
+        <ActivityIndicator size={52} color={"#DD614A"} />
+      )}
+      {post && loggedInUser.user_id === post.user_id && (
         <TouchableOpacity style={styles.button} onPress={deletePost}>
           <Fontisto name="trash" size={24} color="white" />
         </TouchableOpacity>
