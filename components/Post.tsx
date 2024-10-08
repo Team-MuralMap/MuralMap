@@ -7,11 +7,12 @@ import {
   FontAwesome5,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { left } from "@cloudinary/url-gen/qualifiers/textAlignment";
 const defaultAuthorUri = "https://www.flickr.com/photos/loopzilla/2203595978";
 
 export default function Post({
   post,
-  author = { username: "<loading...>" },
+  author,
   city,
 }: {
   post: {
@@ -30,18 +31,25 @@ export default function Post({
   return (
     <>
       <View style={styles.userContainer}>
-        <Image source={{ uri: author.avatar_url }} style={styles.avatar} />
-        {author ? (
-          <Text style={styles.username}>{author.username}</Text>
-        ) : (
-          <Text style={styles.username}>loading...</Text>
-        )}
-        {city ? (
-          <Text>
-            <MaterialCommunityIcons name="map-marker-outline" size={18} />
-            {city}
+        <Image
+          source={author ? { uri: author.avatar_url } : {}}
+          style={styles.avatar}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.username}>
+            {author ? author.username : "loading..."}
           </Text>
-        ) : null}
+          {city ? (
+            <View style={styles.cityContainer}>
+              <MaterialCommunityIcons
+                name="map-marker-outline"
+                size={18}
+                style={styles.locationIcon}
+              />
+              <Text style={styles.city}>{city}</Text>
+            </View>
+          ) : null}
+        </View>
       </View>
 
       <Image source={{ uri: img_url }} style={styles.image} />
@@ -54,6 +62,10 @@ export default function Post({
 const screenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
+  userContainer: {
+    position: "relative",
+    margin: 10,
+  },
   image: {
     width: screenWidth,
     height: screenWidth,
@@ -66,16 +78,28 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderRadius: 50,
     marginLeft: screenWidth / 32,
+    position: "relative",
+    left: 0,
+    top: 0,
+    backgroundColor: "grey",
   },
-  city: {},
-  userContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
-    gap: 16,
-    margin: 10,
+  textContainer: {
+    position: "relative",
+    left: screenWidth / 8 + screenWidth / 16,
+    top: 4 - screenWidth / 8,
+    marginBottom: 7 - screenWidth / 8,
+    flex: 1,
+    flexDirection: "column",
   },
   username: {
     fontSize: 16,
+    fontWeight: "700",
+  },
+  cityContainer: { flex: 1, flexDirection: "row" },
+  locationIcon: {
+    marginHorizontal: 3,
+  },
+  city: {
+    fontSize: 14,
   },
 });
