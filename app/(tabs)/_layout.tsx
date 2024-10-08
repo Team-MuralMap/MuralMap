@@ -70,6 +70,13 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+      name="view-post"
+      options={{
+        href: null,
+      }}
+      />
     </Tabs>
   );
 }

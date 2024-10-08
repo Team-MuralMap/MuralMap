@@ -1,8 +1,9 @@
 import Post from "@/components/Post";
 import { useLocalSearchParams } from "expo-router";
-import CommentsSection from "../components/CommentsSection";
+import CommentsSection from "../../components/CommentsSection";
 import { useState, useEffect } from "react";
 import { fetchCommentsByPostId, fetchUserByUserId } from "@/client/client.mjs";
+import { StyleSheet } from "react-native";
 
 export default function ViewPost() {
   const [comments, SetComments] = useState([]);
@@ -55,3 +56,17 @@ export default function ViewPost() {
     </>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  flatListContent: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingTop: 50,
+  },
+})

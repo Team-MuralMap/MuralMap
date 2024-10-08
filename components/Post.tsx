@@ -7,8 +7,18 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { convertDateShort } from "../client/utils";
 import { useRouter } from "expo-router";
+
+// Custom function to format the date
+const formatDate = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  };
+  return date.toLocaleDateString(undefined, options);
+};
 
 export default function Post({
   post,
@@ -34,7 +44,7 @@ export default function Post({
       <View style={styles.userContainer}>
         <Image source={{ uri: author.avatar_url }} style={styles.avatar} />
         <Text style={styles.username}>{author.username}</Text>
-        <Text>{city}</Text>
+        <Text style={styles.city}>{city}</Text>
       </View>
       <TouchableOpacity
         onPress={() =>
@@ -49,8 +59,8 @@ export default function Post({
         }
       >
         <Image source={{ uri: img_url }} style={styles.image} />
-        <Text> {body}</Text>
-        <Text>{convertDateShort(created_at)}</Text>
+        <Text style={styles.body}>{body}</Text>
+        <Text style={styles.postTime}>{formatDate(created_at)}</Text>
       </TouchableOpacity>
     </>
   );
@@ -66,10 +76,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: screenWidth / 8,
     height: screenWidth / 8,
-    borderColor: "#000000",
-    borderWidth: 2,
-    borderStyle: "solid",
-    borderRadius: screenWidth / 32,
+    borderRadius: screenWidth / 16,
     marginLeft: screenWidth / 32,
   },
   userContainer: {
@@ -81,5 +88,18 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 16,
+    fontWeight: "bold",
+  },
+  city: {
+    color: "#DD614A",
+  },
+  body: {
+    padding: 20, 
+    fontSize: 16,
+  },
+  postTime: {
+    fontSize: 11,
+    color: "#888888",
+    paddingLeft: 20,
   },
 });
