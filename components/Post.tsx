@@ -2,13 +2,17 @@ import React from "react";
 import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { convertDateShort } from "../client/utils";
 import { useRouter } from "expo-router";
-import {
-  FontAwesome,
-  FontAwesome5,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
-import { left } from "@cloudinary/url-gen/qualifiers/textAlignment";
-const defaultAuthorUri = "https://www.flickr.com/photos/loopzilla/2203595978";
+
+// Custom function to format the date
+const formatDate = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return date.toLocaleDateString(undefined, options);
+};
 
 export default function Post({
   post,
@@ -53,8 +57,8 @@ export default function Post({
       </View>
 
       <Image source={{ uri: img_url }} style={styles.image} />
-      <Text> {body}</Text>
-      <Text>{convertDateShort(created_at)}</Text>
+      <Text style={styles.body}> {body}</Text>
+      <Text style={styles.postTime}>{formatDate(created_at)}</Text>
     </>
   );
 }
@@ -73,10 +77,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: screenWidth / 8,
     height: screenWidth / 8,
-    borderColor: "grey",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 50,
+    borderRadius: screenWidth / 16,
     marginLeft: screenWidth / 32,
     position: "relative",
     left: 0,
@@ -93,13 +94,22 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "bold",
+  },
+  city: {
+    color: "#DD614A",
+  },
+  body: {
+    padding: 20,
+    fontSize: 16,
+  },
+  postTime: {
+    fontSize: 11,
+    color: "#888888",
+    paddingLeft: 20,
   },
   cityContainer: { flex: 1, flexDirection: "row" },
   locationIcon: {
     marginRight: 3,
-  },
-  city: {
-    fontSize: 14,
   },
 });

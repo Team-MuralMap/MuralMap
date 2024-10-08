@@ -42,12 +42,14 @@ export default function CommentsSection({ comments, commentAuthors }: any) {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    paddingTop: 10,
   },
   commentContainer: {
     marginBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     paddingBottom: 10,
+    paddingTop: 20,
   },
   authorContainer: {
     flexDirection: "row",

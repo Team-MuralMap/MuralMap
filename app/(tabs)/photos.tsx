@@ -1,10 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Text,
   View,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -42,7 +43,13 @@ export default function Photos() {
         fetchUsers(),
       ]);
 
-      setPosts(posts);
+      const sortedPosts = posts.sort((a: Post, b: Post) => {
+        return (
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      });
+
+      setPosts(sortedPosts);
       setUsers(users);
       setIsPostsLoading(false);
       setIsUsersLoading(false);
@@ -76,7 +83,9 @@ export default function Photos() {
       <PhotoFilters setSortQuery={setSortQuery} sortQuery={sortQuery} />
 
       {isPostsLoading || isUsersLoading ? (
-        <Text>Loading...</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#DD614A" />
+        </View>
       ) : (
         <View>
           {posts.map((item) => {
@@ -110,35 +119,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
+    margin: 0,
+    padding: 0,
   },
   flatListContent: {
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 0,
+    paddingTop: 50,
   },
   postContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    marginVertical: 8,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3, // Android shadow
+    marginBottom: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingBottom: 10,
+    paddingTop: 50,
+  },
+  usernameText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  cityText: {
+    // Add a new style for the city text
+    fontSize: 14,
+    color: "#DD614A", // Set the city color
+  },
+  postTime: {
+    fontSize: 12,
+    color: "#888",
+    marginTop: 5,
+    textAlign: "right",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#555",
   },
 });
