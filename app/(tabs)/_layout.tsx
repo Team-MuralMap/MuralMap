@@ -1,9 +1,11 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React from "react";
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -12,7 +14,26 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: false,
+        headerStyle: {
+          backgroundColor: "#DD614A",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={() => {
+              router.back();
+            }}
+          >
+            <Ionicons
+              size={28}
+              style={{ color: "white", marginLeft: 20 }}
+              name="arrow-back"
+            />
+          </TouchableOpacity>
+        ),
       }}
     >
       <Tabs.Screen
@@ -25,8 +46,11 @@ export default function TabLayout() {
               color={color}
             />
           ),
+          headerLeft: () => <></>,
+          headerTitle: "Home",
         }}
       />
+
       <Tabs.Screen
         name="photos"
         options={{
@@ -39,6 +63,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="create-post"
         options={{
@@ -61,6 +86,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{
@@ -70,7 +96,8 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      {/* <Tabs.Screen name="publish-post" options={{ href: null }} /> */}
     </Tabs>
   );
 }
-
