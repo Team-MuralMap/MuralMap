@@ -4,7 +4,7 @@ import React from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function TabLayout() {
@@ -22,6 +22,24 @@ export default function TabLayout() {
           fontWeight: "bold",
         },
         headerLeft: () => (
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/");
+              }}
+            >
+              <Image
+                style={{
+                  height: 28,
+                  width: 28,
+                  marginLeft: 20,
+                }}
+                source={require("../../assets/images/icon.png")}
+              />
+            </TouchableOpacity>
+          </View>
+        ),
+        headerRight: () => (
           <TouchableOpacity
             onPress={() => {
               router.back();
@@ -29,12 +47,13 @@ export default function TabLayout() {
           >
             <Ionicons
               size={28}
-              style={{ color: "white", marginLeft: 20 }}
-              name="arrow-back"
+              style={{ color: "white", marginHorizontal: 20 }}
+              name="arrow-back-circle"
             />
           </TouchableOpacity>
         ),
       }}
+      backBehavior="history"
     >
       <Tabs.Screen
         name="index"
@@ -46,7 +65,7 @@ export default function TabLayout() {
               color={color}
             />
           ),
-          headerLeft: () => <></>,
+          headerRight: () => <></>,
           headerTitle: "Home",
         }}
       />
