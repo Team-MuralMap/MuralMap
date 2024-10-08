@@ -9,6 +9,11 @@ import {
 } from "react-native";
 import { convertDateShort } from "../client/utils";
 import { useRouter } from "expo-router";
+import {
+  FontAwesome,
+  FontAwesome5,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 const defaultAuthorUri = "https://www.flickr.com/photos/loopzilla/2203595978";
 
 export default function Post({
@@ -32,19 +37,21 @@ export default function Post({
 
   return (
     <>
-      {author ? (
-        <View style={styles.userContainer}>
-          <Image source={{ uri: author.avatar_url }} style={styles.avatar} />
+      <View style={styles.userContainer}>
+        <Image source={{ uri: author.avatar_url }} style={styles.avatar} />
+        {author ? (
           <Text style={styles.username}>{author.username}</Text>
-          <Text>{city}</Text>
-        </View>
-      ) : (
-        <View>
-          <Image source={{ uri: defaultAuthorUri }} style={styles.avatar} />
+        ) : (
           <Text style={styles.username}>loading...</Text>
-          <Text>{city}</Text>
-        </View>
-      )}
+        )}
+        {city ? (
+          <Text>
+            <MaterialCommunityIcons name="map-marker-outline" size={18} />
+            {city}
+          </Text>
+        ) : null}
+      </View>
+
       <TouchableOpacity
         onPress={() => {
           router.push({
@@ -70,12 +77,13 @@ const styles = StyleSheet.create({
   avatar: {
     width: screenWidth / 8,
     height: screenWidth / 8,
-    borderColor: "#000000",
-    borderWidth: 2,
+    borderColor: "grey",
+    borderWidth: 1,
     borderStyle: "solid",
-    borderRadius: screenWidth / 32,
+    borderRadius: 50,
     marginLeft: screenWidth / 32,
   },
+  city: {},
   userContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
