@@ -46,16 +46,11 @@ export default function Post({
         </View>
       )}
       <TouchableOpacity
-        onPress={() =>
+        onPress={() => {
           router.push({
             pathname: `/post/${post_id}`,
-            params: {
-              post: JSON.stringify(post),
-              author: JSON.stringify(author),
-              city: city,
-            },
-          })
-        }
+          });
+        }}
       >
         <Image source={{ uri: img_url }} style={styles.image} />
         <Text> {body}</Text>

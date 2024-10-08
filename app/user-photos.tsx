@@ -6,9 +6,12 @@ import {
   ActivityIndicator,
   StyleSheet,
   FlatList,
+  TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import axios from "axios";
 import { fetchPosts } from "@/client/client.mjs";
+import { router } from "expo-router";
 
 const UserPhotos: React.FC = () => {
   const [photos, setPhotos] = useState<any>([]);
@@ -21,9 +24,9 @@ const UserPhotos: React.FC = () => {
     fetchPosts({ user_id: 1 })
       .then(({ posts }) => {
         const sortedPosts = posts.sort(
-          (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a: any, b: any) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
-        console.log(posts);
         setPhotos(sortedPosts);
         setLoading(false);
       })
@@ -31,7 +34,6 @@ const UserPhotos: React.FC = () => {
         setError("Failed to fetch photos");
         setLoading(false);
       });
-
   }, []);
 
   if (loading) {
@@ -56,7 +58,14 @@ const UserPhotos: React.FC = () => {
         data={photos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Image src={item.img_url} style={styles.photo} />
+          <TouchableOpacity
+            onPress={() => {
+              console.log(item.post_id);
+              router.push(`post/${item.post_id}`);
+            }}
+          >
+            <Image src={item.img_url} style={styles.photo} />
+          </TouchableOpacity>
         )}
         numColumns={3}
         columnWrapperStyle={styles.row}
@@ -65,10 +74,12 @@ const UserPhotos: React.FC = () => {
   );
 };
 
+const screenWidth = Dimensions.get("window").width;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '97%',
+    width: "97%",
     padding: 10,
     backgroundColor: "#f2f2f2",
   },
@@ -83,8 +94,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photo: {
-    width: "30%",
-    height: 100,
+    width: 0.3 * (screenWidth - 30),
+    height: 0.3 * (screenWidth - 30),
     margin: 5,
     borderRadius: 8,
   },

@@ -1,7 +1,12 @@
 import Post from "@/components/Post";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  useFocusEffect,
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
 import CommentsSection from "../../../components/CommentsSection";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import {
   deletePostByPostId,
   fetchCityForSite,
@@ -21,6 +26,7 @@ import Fontisto from "@expo/vector-icons/Fontisto";
 
 export default function ViewPost() {
   const { loggedInUser } = useContext(UserContext);
+  // const [postLoading, setPostLoading] = useState(true);
   const [post, setPost] = useState<{
     user_id: number;
     body: string;
@@ -35,14 +41,16 @@ export default function ViewPost() {
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [commentAuthors, setCommentAuthors] = useState([]);
   const post_id = Number(
-    useLocalSearchParams<{
+    useGlobalSearchParams<{
       post_id: string;
     }>().post_id
   );
-
   const router = useRouter();
 
-  useEffect(() => {
+  const loadPost = async () => {
+    setPost(null);
+    setAuthor(null);
+    SetComments([]);
     fetchPostById(post_id)
       .then(({ post }) => {
         setPost(post);
@@ -52,7 +60,13 @@ export default function ViewPost() {
         ]);
       })
       .catch((err) => console.error(`Loading error: ${err}`));
-  }, []);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadPost();
+    }, [post_id])
+  );
 
   useEffect(() => {
     const loadComments = async () => {
@@ -84,7 +98,7 @@ export default function ViewPost() {
     };
 
     loadComments();
-  }, [post_id]);
+  }, [post]);
 
   function deletePost() {
     Alert.alert(
@@ -114,7 +128,6 @@ export default function ViewPost() {
 
   return (
     <>
-      <Text>NEW</Text>
       {post ? (
         <Post post={post} author={author} city={city} />
       ) : (

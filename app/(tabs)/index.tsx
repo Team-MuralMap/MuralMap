@@ -78,9 +78,6 @@ export default function Index() {
                 <Marker key={site_id} coordinate={{ latitude, longitude }}>
                   <Callout
                     onPress={() => {
-                      console.log(
-                        `You just pressed site ${site_id}! Go to ${post_id}`
-                      );
                       router.push(`/post/${post_id}`);
                     }}
                   >
