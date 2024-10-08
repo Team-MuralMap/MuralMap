@@ -43,13 +43,7 @@ export default function Photos() {
         fetchUsers(),
       ]);
 
-      const sortedPosts = posts.sort((a: Post, b: Post) => {
-        return (
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      });
-
-      setPosts(sortedPosts);
+      setPosts(posts);
       setUsers(users);
       setIsPostsLoading(false);
       setIsUsersLoading(false);
