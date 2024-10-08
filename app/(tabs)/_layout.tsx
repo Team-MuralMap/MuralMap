@@ -124,6 +124,11 @@ export default function TabLayout() {
         name="view-post"
         options={{ href: null, title: "View post" }}
       />
+
+      <Tabs.Screen
+        name="post/[post_id]"
+        options={{ href: null, title: "View post" }}
+      />
     </Tabs>
   );
 }
