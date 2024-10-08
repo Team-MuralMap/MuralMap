@@ -1,5 +1,11 @@
 import { useState, useCallback } from "react";
-import { Text, View, ScrollView, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   fetchPosts,
@@ -7,6 +13,7 @@ import {
   fetchCityForSite,
 } from "../../client/client.mjs";
 import Post from "@/components/Post";
+import { useRouter } from "expo-router";
 
 export default function Photos() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -14,6 +21,8 @@ export default function Photos() {
   const [users, setUsers] = useState<any[]>([]);
   const [isUsersLoading, setIsUsersLoading] = useState(true);
   const [cities, setCities] = useState<{ [postId: string]: string }>({});
+
+  const router = useRouter();
 
   const fetchData = async () => {
     setIsPostsLoading(true);
@@ -66,12 +75,19 @@ export default function Photos() {
             );
             const city = cities[item.post_id];
             return (
-              <Post
+              <TouchableOpacity
+                onPress={() => {
+                  router.push(`/post/${item.post_id}`);
+                }}
                 key={item.post_id}
-                post={item}
-                author={author}
-                city={city}
-              />
+              >
+                <Post
+                  key={item.post_id}
+                  post={item}
+                  author={author}
+                  city={city}
+                />
+              </TouchableOpacity>
             );
           })}
         </View>
