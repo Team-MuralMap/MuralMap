@@ -7,10 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { convertDateShort } from "../client/utils";
-import { router, useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { fetchPosts, fetchSites } from "@/client/client.mjs";
+import { fetchPosts } from "@/client/client.mjs";
 
 // Custom function to format the date
 const formatDate = (timestamp: string) => {
@@ -37,16 +36,19 @@ export default function Post({
     created_at: string;
     post_id: number;
     site_id: number;
+    likes_count: number;
   };
   author: any;
   city: string;
   isSiteScrollActive?: boolean;
   clickable: boolean;
 }) {
-  const { post_id, body, img_url, created_at, user_id } = post;
+  const { post_id, body, img_url, created_at, user_id, likes_count } = post;
   const [sitePostIds, setSitePostIds] = useState<Array<number>>([]);
   const [isSitePostsLoading, setIsSitePostsLoading] = useState(true);
   const [postIndex, setPostIndex] = useState<number | null>(null);
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState<number>(Number(likes_count));
 
   useFocusEffect(
     useCallback(() => {
@@ -73,6 +75,11 @@ export default function Post({
   );
 
   const router = useRouter();
+
+  const handleLikePress = () => {
+    setLiked(!liked);
+    setLikes(liked ? likes - 1 : likes + 1);
+  };
 
   return (
     <>
@@ -150,7 +157,23 @@ export default function Post({
             </>
           ) : null}
         </View>
-        <Text style={styles.body}> {body}</Text>
+        <View style={styles.bodyContainer}>
+          <Text style={styles.body}> {body}</Text>
+          <View style={styles.likesContainer}>
+            <Text style={styles.likesCount}>
+              {likes} {likes.toString() === "1" ? "like" : "likes"}
+            </Text>
+            <TouchableOpacity
+              onPress={handleLikePress}
+              style={styles.likeButton}
+            >
+              <Text style={styles.likeButtonText}>
+                {liked ? "Liked" : "Like"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <Text style={styles.postTime}>{formatDate(created_at)}</Text>
       </TouchableOpacity>
     </>
@@ -194,9 +217,33 @@ const styles = StyleSheet.create({
     color: "#DD614A",
     fontSize: screenWidth / 32,
   },
-  body: {
+  bodyContainer: {
     padding: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  body: {
     fontSize: 16,
+    flex: 1,
+  },
+  likesContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  likesCount: {
+    fontSize: 14,
+    color: "#DD614A",
+    marginRight: 10,
+  },
+  likeButton: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "#DD614A",
+  },
+  likeButtonText: {
+    fontSize: 14,
+    color: "white",
   },
   postTime: {
     fontSize: 11,
