@@ -1,6 +1,12 @@
 import React from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
-import { convertDateShort } from "../client/utils";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -31,35 +37,48 @@ export default function Post({
   author: any;
   city: string;
 }) {
-  const { body, img_url, created_at } = post;
+  const { post_id, body, img_url, created_at, user_id } = post;
+
+  const router = useRouter();
 
   return (
     <>
-      <View style={styles.userContainer}>
-        <Image
-          source={author ? { uri: author.avatar_url } : {}}
-          style={styles.avatar}
-        />
-        <View style={styles.textContainer}>
-          <Text style={styles.username}>
-            {author ? author.username : "loading..."}
-          </Text>
-          {city ? (
-            <View style={styles.cityContainer}>
-              <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={screenWidth / 24}
-                style={styles.locationIcon}
-              />
-              <Text style={styles.city}>{city}</Text>
-            </View>
-          ) : null}
+      <TouchableOpacity
+        onPress={() => {
+          router.push(`/profile?user_id=${user_id}`);
+        }}
+      >
+        <View style={styles.userContainer}>
+          <Image
+            source={author ? { uri: author.avatar_url } : {}}
+            style={styles.avatar}
+          />
+          <View style={styles.textContainer}>
+            <Text style={styles.username}>
+              {author ? author.username : "loading..."}
+            </Text>
+            {city ? (
+              <View style={styles.cityContainer}>
+                <MaterialCommunityIcons
+                  name="map-marker-outline"
+                  size={screenWidth / 24}
+                  style={styles.locationIcon}
+                />
+                <Text style={styles.city}>{city}</Text>
+              </View>
+            ) : null}
+          </View>
         </View>
-      </View>
-
-      <Image source={{ uri: img_url }} style={styles.image} />
-      <Text style={styles.body}> {body}</Text>
-      <Text style={styles.postTime}>{formatDate(created_at)}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          router.push(`/post/${post_id}`);
+        }}
+      >
+        <Image source={{ uri: img_url }} style={styles.image} />
+        <Text style={styles.body}> {body}</Text>
+        <Text style={styles.postTime}>{formatDate(created_at)}</Text>
+      </TouchableOpacity>
     </>
   );
 }

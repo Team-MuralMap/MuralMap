@@ -1,11 +1,21 @@
+import { useRouter } from "expo-router";
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 
 export default function CommentsSection({ comments, commentAuthors }: any) {
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleString();
   };
+
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -19,13 +29,19 @@ export default function CommentsSection({ comments, commentAuthors }: any) {
           return (
             <View key={comment.comment_id} style={styles.commentContainer}>
               {author !== undefined && (
-                <View style={styles.authorContainer}>
-                  <Image
-                    source={{ uri: author.user.avatar_url }}
-                    style={styles.avatar}
-                  />
-                  <Text style={styles.username}>{author.user.username}</Text>
-                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push(`/profile?user_id=${comment.user_id}`);
+                  }}
+                >
+                  <View style={styles.authorContainer}>
+                    <Image
+                      source={{ uri: author.user.avatar_url }}
+                      style={styles.avatar}
+                    />
+                    <Text style={styles.username}>{author.user.username}</Text>
+                  </View>
+                </TouchableOpacity>
               )}
               <Text style={styles.commentBody}>{comment.body}</Text>
               <Text style={styles.commentTime}>

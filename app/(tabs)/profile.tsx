@@ -1,14 +1,17 @@
-import React from 'react';
-import { Text, View, StyleSheet } from "react-native";
+import React from "react";
+import { View, StyleSheet } from "react-native";
 import UserCard from "../user-card";
 import UserPhotos from "../user-photos";
+import { useLocalSearchParams } from "expo-router";
 
 export default function Profile() {
+  const { user_id } = useLocalSearchParams();
+
   return (
     <View style={styles.container}>
       <View style={styles.spacer}></View>
-      <UserCard />
-      <UserPhotos />
+      <UserCard user_id={user_id} />
+      <UserPhotos user_id={user_id} />
     </View>
   );
 }
