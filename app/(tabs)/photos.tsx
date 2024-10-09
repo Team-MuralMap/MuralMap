@@ -88,6 +88,7 @@ export default function Photos() {
                   post={item}
                   author={author}
                   city={city}
+                  clickable={true}
                 />
               </View>
             );

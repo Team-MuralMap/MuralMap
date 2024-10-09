@@ -26,6 +26,7 @@ import {
 } from "react-native";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Post from "@/components/Post";
 
 export default function ViewPost() {
   const { loggedInUser } = useContext(UserContext);
@@ -158,39 +159,13 @@ export default function ViewPost() {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {post ? (
-            <>
-              <TouchableOpacity
-                onPress={() => {
-                  router.push(`/profile?user_id=${author.user_id}`);
-                }}
-              >
-                <View style={styles.userContainer}>
-                  <Image
-                    source={author ? { uri: author.avatar_url } : {}}
-                    style={styles.avatar}
-                  />
-                  <View style={styles.textContainer}>
-                    <Text style={styles.username}>
-                      {author ? author.username : "loading..."}
-                    </Text>
-                    {city ? (
-                      <View style={styles.cityContainer}>
-                        <MaterialCommunityIcons
-                          name="map-marker-outline"
-                          size={screenWidth / 24}
-                          style={styles.locationIcon}
-                        />
-                        <Text style={styles.city}>{city}</Text>
-                      </View>
-                    ) : null}
-                  </View>
-                </View>
-              </TouchableOpacity>
-
-              <Image source={{ uri: post.img_url }} style={styles.image} />
-              <Text style={styles.body}> {post.body}</Text>
-              <Text style={styles.postTime}>{formatDate(post.created_at)}</Text>
-            </>
+            <Post
+              post={post}
+              author={author}
+              city={city}
+              isSiteScrollActive={true}
+              clickable={false}
+            />
           ) : (
             <ActivityIndicator size={52} color={"#DD614A"} />
           )}

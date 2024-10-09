@@ -93,7 +93,9 @@ export default function LocationSelector({
           });
         }}
       >
-        <Text>{isChoiceBySite ? "New site" : "Existing Site"}</Text>
+        <Text style={styles.buttonText}>
+          {isChoiceBySite ? "New site" : "Existing Site"}
+        </Text>
       </TouchableOpacity>
       {isChoiceBySite ? (
         <>
@@ -211,22 +213,26 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   map: {
-    height: screenHeight * 0.5,
+    height: screenHeight * 0.4,
     width: screenWidth,
   },
   button: {
     backgroundColor: "#DD614A",
     paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 50,
-    width: screenWidth / 3,
-    height: 50,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginLeft: 10,
+    width: 120,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
     zIndex: 1,
     bottom: 10,
     right: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
   },
   sitePreviewImg: {
     width: screenWidth / 6,
