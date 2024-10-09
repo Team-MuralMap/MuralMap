@@ -11,6 +11,7 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { fetchSites } from "@/client/client.mjs";
 import WebView from "react-native-webview";
+import { router } from "expo-router";
 const defaultSitePreview =
   "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0f7bfb63-2a9d-4b1e-bdf6-08be9a3482fd/width=450/view-129-gigapixel-art-scale-2_00x.jpeg";
 
@@ -52,6 +53,13 @@ export default function Index() {
     });
   }, []);
 
+  const initalRegion = {
+    latitude: 53.452362850876106,
+    latitudeDelta: 0.27733357257162083,
+    longitude: -2.255229167640209,
+    longitudeDelta: 0.2548038214445114,
+  };
+
   if (Platform.OS === "android" || Platform.OS === "ios") {
     return (
       <View
@@ -66,32 +74,33 @@ export default function Index() {
           onPress={(e) => {
             Location.getCurrentPositionAsync({}).then((location) => {
               setLocation(location);
-              console.log("Current location:", location);
             });
           }}
+          initialRegion={initalRegion}
           style={styles.map}
         >
-          {sites.map(({ latitude, longitude, site_id, site_preview_url }) =>
-            site_preview_url ? (
-              <Marker key={site_id} coordinate={{ latitude, longitude }}>
-                <Callout
-                  onPress={() =>
-                    console.log(`You just pressed site ${site_id}!`)
-                  }
-                >
-                  <WebView
-                    source={{ uri: site_preview_url || defaultSitePreview }}
-                    style={styles.sitePreviewImg}
-                  />
-                </Callout>
-              </Marker>
-            ) : (
-              <Marker
-                pinColor={"blue"}
-                coordinate={{ latitude, longitude }}
-                key={site_id}
-              ></Marker>
-            )
+          {sites.map(
+            ({ latitude, longitude, site_id, site_preview_url, post_id }) =>
+              site_preview_url ? (
+                <Marker key={site_id} coordinate={{ latitude, longitude }}>
+                  <Callout
+                    onPress={() => {
+                      router.push(`/post/${post_id}`);
+                    }}
+                  >
+                    <WebView
+                      source={{ uri: site_preview_url || defaultSitePreview }}
+                      style={styles.sitePreviewImg}
+                    />
+                  </Callout>
+                </Marker>
+              ) : (
+                <Marker
+                  pinColor={"blue"}
+                  coordinate={{ latitude, longitude }}
+                  key={site_id}
+                ></Marker>
+              )
           )}
         </MapView>
       </View>

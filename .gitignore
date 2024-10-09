@@ -25,3 +25,9 @@ ios/
 
 # IDE settings
 .vscode/
+
+# Swap files
+*.swp
+
+# Example app
+app-example/

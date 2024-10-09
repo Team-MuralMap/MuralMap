@@ -42,6 +42,13 @@ export default function LocationSelector({
   >([]);
   const [isSitesLoading, setIsSitesLoading] = useState(true);
 
+  const defaultInitalRegion = {
+    latitude: 53.452362850876106,
+    latitudeDelta: 0.27733357257162083,
+    longitude: -2.255229167640209,
+    longitudeDelta: 0.2548038214445114,
+  };
+
   useEffect(() => {
     setIsSitesLoading(true);
     fetchSites()
@@ -93,7 +100,9 @@ export default function LocationSelector({
           });
         }}
       >
-        <Text>{isChoiceBySite ? "New site" : "Existing Site"}</Text>
+        <Text style={styles.buttonText}>
+          {isChoiceBySite ? "New site" : "Existing Site"}
+        </Text>
       </TouchableOpacity>
       {isChoiceBySite ? (
         <>
@@ -111,10 +120,10 @@ export default function LocationSelector({
                 ? {
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
-                    latitudeDelta: 1,
-                    longitudeDelta: 2,
+                    latitudeDelta: 0.1,
+                    longitudeDelta: 0.1,
                   }
-                : undefined
+                : defaultInitalRegion
             }
             followsUserLocation={true}
             showsUserLocation={true}
@@ -136,7 +145,7 @@ export default function LocationSelector({
                     setSelectedSite(site_id);
                     setTimeout(function (this: any) {
                       this[`markerRef${site_id}`].showCallout();
-                    }, 100);
+                    }, 300);
                   }}
                   pinColor={
                     site_id === selectedSite
@@ -188,10 +197,10 @@ export default function LocationSelector({
               ? {
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
-                  latitudeDelta: 1,
-                  longitudeDelta: 2,
+                  latitudeDelta: 0.1,
+                  longitudeDelta: 0.1,
                 }
-              : undefined
+              : defaultInitalRegion
           }
         >
           {regionCoordinates ? (
@@ -211,22 +220,26 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   map: {
-    height: screenHeight * 0.5,
+    height: screenHeight * 0.4,
     width: screenWidth,
   },
   button: {
     backgroundColor: "#DD614A",
     paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 50,
-    width: screenWidth / 3,
-    height: 50,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginLeft: 10,
+    width: 120,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
     zIndex: 1,
     bottom: 10,
     right: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
   },
   sitePreviewImg: {
     width: screenWidth / 6,

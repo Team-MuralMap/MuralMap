@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,24 +6,29 @@ import {
   ActivityIndicator,
   StyleSheet,
   FlatList,
+  TouchableOpacity,
+  Dimensions,
 } from "react-native";
-import axios from "axios";
 import { fetchPosts } from "@/client/client.mjs";
+import { router, useFocusEffect } from "expo-router";
 
-const UserPhotos: React.FC = () => {
+interface UserPhotosProps {
+  user_id: string;
+}
+
+const UserPhotos: React.FC<UserPhotosProps> = ({ user_id }) => {
   const [photos, setPhotos] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Fetch the photos for the user with ID 1
-
-    fetchPosts({ user_id: 1 })
+  const loadPosts = async () => {
+    setLoading(true);
+    fetchPosts({ user_id: user_id })
       .then(({ posts }) => {
         const sortedPosts = posts.sort(
-          (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a: any, b: any) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
-        console.log(posts);
         setPhotos(sortedPosts);
         setLoading(false);
       })
@@ -31,8 +36,17 @@ const UserPhotos: React.FC = () => {
         setError("Failed to fetch photos");
         setLoading(false);
       });
+  };
 
+  useEffect(() => {
+    loadPosts();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadPosts();
+    }, [user_id])
+  );
 
   if (loading) {
     return (
@@ -54,9 +68,18 @@ const UserPhotos: React.FC = () => {
     <View style={styles.container}>
       <FlatList
         data={photos}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.post_id}
         renderItem={({ item }) => (
-          <Image src={item.img_url} style={styles.photo} />
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/post/[post_id]",
+                params: { post_id: item.post_id },
+              });
+            }}
+          >
+            <Image src={item.img_url} style={styles.photo} />
+          </TouchableOpacity>
         )}
         numColumns={3}
         columnWrapperStyle={styles.row}
@@ -65,10 +88,12 @@ const UserPhotos: React.FC = () => {
   );
 };
 
+const screenWidth = Dimensions.get("window").width;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '97%',
+    width: "97%",
     padding: 10,
     backgroundColor: "#f2f2f2",
   },
@@ -83,13 +108,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photo: {
-    width: "30%",
-    height: 100,
+    width: 0.3 * (screenWidth - 30),
+    height: 0.3 * (screenWidth - 30),
     margin: 5,
     borderRadius: 8,
+    backgroundColor: "#cccccc",
   },
   row: {
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
 });
 

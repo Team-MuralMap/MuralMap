@@ -133,6 +133,18 @@ export default function createPost() {
           <AntDesign name="upload" size={24} color="white" />
         </TouchableOpacity>
       </View>
+      {/* DEV BUTTON */}
+      {/* <TouchableOpacity
+        style={styles.button}
+        onPress={() =>
+          goToPublishPhoto(
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1_tRqm5i7dbCo8kHeUxVJkb9p_TJbkBLiRA&s"
+          )
+        }
+      >
+        <Text>Dev</Text>
+      </TouchableOpacity> */}
+      {/* DEV BUTTON END */}
     </View>
   );
 }
