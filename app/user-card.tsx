@@ -28,7 +28,7 @@ const UserCard: React.FC<UserCardProps> = ({ user_id }) => {
       setUser(response.data.user);
       setLoading(false);
     } catch (err) {
-      setError(`Failed to fetch user: ${err}`);
+      setError(`Failed to fetch user`);
       setLoading(false);
     }
   };
