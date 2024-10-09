@@ -28,3 +28,6 @@ ios/
 
 # Swap files
 *.swp
+
+# Example app
+app-example/
