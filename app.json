@@ -58,6 +58,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "50094b85-d8c4-47e7-b60f-d54e6e271581"
+      }
+    },
+    "owner": "xon_ac"
   }
 }

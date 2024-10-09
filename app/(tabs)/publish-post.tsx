@@ -1,241 +1,171 @@
-import { createPostAndSite, createPostOnSite } from "@/client/client.mjs";
-import { UserContext } from "@/contexts/UserContext";
-import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Dimensions,
   Image,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
-import LocationSelector from "../../components/LocationSelector";
+import { router, useLocalSearchParams } from "expo-router";
+import { UserContext } from "@/contexts/UserContext";
 
-export default function publishPhoto() {
+export default function PublishPhoto() {
   const { photoUri } = useLocalSearchParams<{ photoUri: string }>();
-  const [caption, onCaptionChange] = useState<string>("");
   const [isPhotoPosting, setIsPhotoPosting] = useState<boolean>(false);
-  const [regionCoordinates, setRegionCoordinates] = useState<null | {
-    latitude: number;
-    longitude: number;
-  }>(null);
+  const [locationSelected, setLocationSelected] = useState<boolean>(false);
+  const [commentAdded, setCommentAdded] = useState<boolean>(false);
   const { loggedInUser } = useContext(UserContext);
-  const [isImageBig, setIsImageBig] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
 
-  // form:
-  const [isChoiceBySite, setIsChoiceBySite] = useState(true);
-  const [selectedSite, setSelectedSite] = useState<null | number>(null);
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
-  useEffect(() => {
-    // Get users location on load (load of app?) and push it to regionCoordinates for initalRegion
-  }, []);
+  const enablePost = locationSelected && commentAdded;
 
-  async function uploadPhoto() {
+  async function postPhoto() {
     setIsPhotoPosting(true);
-    const formData = new FormData();
-    const cloudName = "drfu0sqz0";
-
-    const fileType = photoUri.split(".").at(-1);
-
-    const file: any = {
-      uri: photoUri,
-      name: `photo.${fileType}`,
-      type: `image/${fileType}`,
-    };
-
-    formData.append("file", file);
-    formData.append("upload_preset", "upload_preset");
-    formData.append("folder", "postImages");
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      // this is the url of the image now in cloud storage
-      const cloudUrl = data.secure_url;
-      await postPhoto({ img_url: cloudUrl });
-      setIsPhotoPosting(false);
-    } catch (error) {
-      console.error("Error uploading image to the cloud:", error);
-      setIsPhotoPosting(false);
-    }
-  }
-
-  async function postPhoto({ img_url }: { img_url: string }) {
-    let post: any = {};
-    try {
-      if (isChoiceBySite) {
-        const photoPayload = {
-          user_id: loggedInUser.user_id,
-          img_url,
-          body: caption,
-          site_id: selectedSite,
-        };
-
-        const newPostResponse = await createPostOnSite(photoPayload);
-        post = newPostResponse.post;
-      } else {
-        const photoPayload = {
-          user_id: loggedInUser.user_id,
-          img_url,
-          body: caption,
-        };
-        const sitePayload = {
-          ...regionCoordinates,
-          user_id: loggedInUser.user_id,
-        };
-        const newPostResponse = await createPostAndSite(
-          photoPayload,
-          sitePayload
-        );
-        post = newPostResponse.post;
-      }
-      console.log("This will need changing for diff route: post/:post_id");
-      //CODE FOR REROUTING ONCE ROUTERS ARE BETTER
-
-      // router.push({
-      //   pathname: "/view-post",
-      //   params: {
-      //     post: JSON.stringify(post), // Now post is accessible
-      //     author: JSON.stringify(loggedInUser),
-      //   },
-      // });
-
-      router.push("/photos");
-    } catch {
-      console.error("Error posting photo to database");
-      setIsPhotoPosting(false);
-    }
+    // Your photo upload and post logic goes here
   }
 
   return (
-    <View style={styles.container}>
-      {photoUri ? (
-        <>
-          <Image
-            source={{ uri: photoUri }}
-            style={isImageBig ? styles.bigPhoto : styles.smallPhoto}
-          />
-          <LocationSelector
-            regionCoordinates={regionCoordinates}
-            setRegionCoordinates={setRegionCoordinates}
-            isChoiceBySite={isChoiceBySite}
-            setIsChoiceBySite={setIsChoiceBySite}
-            selectedSite={selectedSite}
-            setSelectedSite={setSelectedSite}
-          />
-          <TextInput
-            style={styles.captionInput}
-            value={caption}
-            onChangeText={onCaptionChange}
-            placeholder="Caption..."
-            placeholderTextColor={"#797979"}
-          />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={router.back}>
-              <Text>Cancel</Text>
-            </TouchableOpacity>
-            {isPhotoPosting ? (
-              <View style={styles.button}>
-                <ActivityIndicator size="large" color="#ffffff" />
-              </View>
-            ) : (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {photoUri ? (
+          <>
+            <Image source={{ uri: photoUri }} style={styles.squarePhoto} />
+            <View style={styles.checklistContainer}>
+              {/* Location Selector */}
               <TouchableOpacity
-                style={styles.button}
+                style={[
+                  styles.checklistItem,
+                  locationSelected ? styles.checklistCompleted : null,
+                ]}
                 onPress={() => {
-                  if (
-                    caption &&
-                    (regionCoordinates || (isChoiceBySite && selectedSite))
-                  ) {
-                    uploadPhoto();
-                  } else {
-                    setErrorMsg("Please choose a location and caption");
-                  }
+                  router.push("/location-selector");
                 }}
               >
-                <Text>Post</Text>
+                <Text style={styles.checklistText}>
+                  {locationSelected ? "Location selected" : "Select Location"}
+                </Text>
               </TouchableOpacity>
-            )}
-          </View>
-        </>
-      ) : null}
-      {errorMsg ? <Text>{errorMsg}</Text> : null}
-    </View>
+
+              {/* Caption Selector */}
+              <TouchableOpacity
+                style={[
+                  styles.checklistItem,
+                  commentAdded ? styles.checklistCompleted : null,
+                ]}
+                onPress={() => {
+                  router.push("/add-caption");
+                }}
+              >
+                <Text style={styles.checklistText}>
+                  {commentAdded ? "Caption added" : "Add a Caption"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Button Container */}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={router.back}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              {isPhotoPosting ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <TouchableOpacity
+                  style={[styles.button, enablePost ? styles.activeButton : styles.disabledButton]}
+                  onPress={enablePost ? postPhoto : () => setErrorMsg("Please complete all fields")}
+                  disabled={!enablePost}
+                >
+                  <Text style={styles.buttonText}>Post</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
+          </>
+        ) : null}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f9f9f9",
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 0,
+    paddingHorizontal: 20,
+  },
+  squarePhoto: {
+    width: screenWidth * 0.8,
+    height: screenWidth * 0.8,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  checklistContainer: {
+    width: "100%",
+    marginVertical: 20,
+  },
+  checklistItem: {
+    padding: 15,
+    marginVertical: 10,
+    backgroundColor: "#e1e1e1",
+    borderRadius: 10,
+    alignItems: "center",
+    borderColor: "#DD614A",
+    borderWidth: 1,
+  },
+  checklistCompleted: {
+    backgroundColor: "#28A745",
+  },
+  checklistText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
   },
   button: {
     backgroundColor: "#DD614A",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 50,
-    width: screenWidth / 3,
-    height: 50,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: 10,
   },
-  buttonContainer: {
-    // flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    // alignItems: "center",
-    height: 60,
-    width: screenWidth,
-    marginTop: 20,
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
-  smallPhoto: {
-    width: screenWidth * 0.5,
-    height: screenWidth * 0.5,
-    borderColor: "#DD614A",
-    borderStyle: "solid",
-    borderWidth: 5,
-    borderRadius: 5,
-    marginBottom: 20,
+  activeButton: {
+    backgroundColor: "#DD614A",
   },
-  bigPhoto: {
-    position: "absolute",
-    width: screenWidth * 0.9,
-    height: screenWidth * 0.9,
-    left: screenWidth * 0.05,
-    borderColor: "green",
-    borderStyle: "solid",
-    borderWidth: 5,
-    borderRadius: 5,
-    marginBottom: 20,
+  disabledButton: {
+    backgroundColor: "#bbb",
   },
-  captionInput: {
-    width: "70%",
-    padding: 10,
-    backgroundColor: "#e1e1e1",
-    borderColor: "#DD614A",
-    borderStyle: "solid",
-    borderWidth: 5,
-    borderRadius: 20,
-    marginTop: 20,
+  errorText: {
+    color: "#D8000C",
+    marginTop: 10,
+    textAlign: "center",
   },
 });

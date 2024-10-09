@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     margin: 10,
     flexDirection: 'row', 
     alignItems: 'center', 
-    width: '90%', 
+    width: '100%', 
     height: 130,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
