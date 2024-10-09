@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     height: 0.3 * (screenWidth - 30),
     margin: 5,
     borderRadius: 8,
+    backgroundColor: "#cccccc",
   },
   row: {
     justifyContent: "space-between",

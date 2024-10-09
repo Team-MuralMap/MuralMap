@@ -43,7 +43,7 @@ To set up the project locally, follow these steps:
 3. Start the app
 
    ```bash
-    npx expo start
+   npx expo start
    ```
 
 some useful guides here
