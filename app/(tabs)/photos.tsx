@@ -1,10 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import {
   Text,
   View,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   ActivityIndicator,
   Dimensions,
 } from "react-native";
@@ -15,11 +14,7 @@ import {
   fetchCityForSite,
 } from "../../client/client.mjs";
 import Post from "@/components/Post";
-import { Collapsible } from "@/components/Collapsible";
-import SelectDropdown from "react-native-select-dropdown";
-import { Ionicons } from "@expo/vector-icons";
 import { PhotoFilters } from "@/components/PhotoFiltering";
-import { useRouter } from "expo-router";
 
 export default function Photos() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -31,8 +26,6 @@ export default function Photos() {
     sort_by: "created_at",
     order: "desc",
   });
-
-  const router = useRouter();
 
   const fetchData = async (sortQuery: { sort_by: string; order: string }) => {
     setIsPostsLoading(true);
@@ -90,18 +83,12 @@ export default function Photos() {
             const city = cities[item.post_id];
             return (
               <View style={styles.postContainer} key={item.post_id}>
-                <TouchableOpacity
-                  onPress={() => {
-                    router.push(`/post/${item.post_id}`);
-                  }}
-                >
-                  <Post
-                    key={item.post_id}
-                    post={item}
-                    author={author}
-                    city={city}
-                  />
-                </TouchableOpacity>
+                <Post
+                  key={item.post_id}
+                  post={item}
+                  author={author}
+                  city={city}
+                />
               </View>
             );
           })}
@@ -111,7 +98,6 @@ export default function Photos() {
   );
 }
 
-const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({

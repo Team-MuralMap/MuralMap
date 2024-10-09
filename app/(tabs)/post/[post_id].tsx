@@ -1,4 +1,3 @@
-import Post from "@/components/Post";
 import { useFocusEffect, useGlobalSearchParams, useRouter } from "expo-router";
 import CommentsSection from "../../../components/CommentsSection";
 import { useState, useEffect, useContext, useCallback } from "react";
@@ -22,8 +21,11 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  Dimensions,
 } from "react-native";
 import Fontisto from "@expo/vector-icons/Fontisto";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function ViewPost() {
   const { loggedInUser } = useContext(UserContext);
@@ -67,9 +69,9 @@ export default function ViewPost() {
     setCommentsLoading(true);
     try {
       const { comments } = await fetchCommentsByPostId(post_id);
-      SetComments(comments.reverse());
 
       if (comments && comments.length > 0) {
+        SetComments(comments.reverse());
         const commentAuthorIds = [
           ...new Set(
             comments.map((comment: { user_id: any }) => comment.user_id)
@@ -100,6 +102,17 @@ export default function ViewPost() {
   useEffect(() => {
     loadComments();
   }, [post]);
+
+  // Custom function to format the date
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString(undefined, options);
+  };
 
   function deletePost() {
     Alert.alert(
@@ -145,7 +158,39 @@ export default function ViewPost() {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {post ? (
-            <Post post={post} author={author} city={city} />
+            <>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push(`/profile?user_id=${author.user_id}`);
+                }}
+              >
+                <View style={styles.userContainer}>
+                  <Image
+                    source={author ? { uri: author.avatar_url } : {}}
+                    style={styles.avatar}
+                  />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.username}>
+                      {author ? author.username : "loading..."}
+                    </Text>
+                    {city ? (
+                      <View style={styles.cityContainer}>
+                        <MaterialCommunityIcons
+                          name="map-marker-outline"
+                          size={screenWidth / 24}
+                          style={styles.locationIcon}
+                        />
+                        <Text style={styles.city}>{city}</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+              <Image source={{ uri: post.img_url }} style={styles.image} />
+              <Text style={styles.body}> {post.body}</Text>
+              <Text style={styles.postTime}>{formatDate(post.created_at)}</Text>
+            </>
           ) : (
             <ActivityIndicator size={52} color={"#DD614A"} />
           )}
@@ -160,7 +205,6 @@ export default function ViewPost() {
           />
         </ScrollView>
 
-        {/* Comment input section, fixed at the bottom */}
         <View style={styles.commentInputContainer}>
           <TextInput
             style={styles.commentInput}
@@ -180,12 +224,14 @@ export default function ViewPost() {
   );
 }
 
+const screenWidth = Dimensions.get("window").width;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 60, // Ensure space for the fixed comment input at the bottom
+    paddingBottom: 60,
   },
   button: {
     backgroundColor: "#FF0000",
@@ -231,5 +277,52 @@ const styles = StyleSheet.create({
   commentButtonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  userContainer: {
+    position: "relative",
+    margin: 10,
+  },
+  image: {
+    width: screenWidth,
+    height: screenWidth,
+  },
+  avatar: {
+    width: screenWidth / 8,
+    height: screenWidth / 8,
+    borderRadius: screenWidth / 16,
+    marginLeft: screenWidth / 32,
+    position: "relative",
+    left: 0,
+    top: 0,
+    backgroundColor: "grey",
+  },
+  textContainer: {
+    position: "absolute",
+    left: screenWidth / 8 + screenWidth / 16,
+    top: 5,
+    marginBottom: 7 - screenWidth / 8,
+    flex: 1,
+    flexDirection: "column",
+  },
+  username: {
+    fontSize: screenWidth / 24,
+    fontWeight: "bold",
+  },
+  city: {
+    color: "#DD614A",
+    fontSize: screenWidth / 32,
+  },
+  body: {
+    padding: 20,
+    fontSize: 16,
+  },
+  postTime: {
+    fontSize: 11,
+    color: "#888888",
+    paddingLeft: 20,
+  },
+  cityContainer: { flex: 1, flexDirection: "row" },
+  locationIcon: {
+    marginRight: 3,
   },
 });
