@@ -28,6 +28,7 @@ export default function Post({
   author,
   city,
   isSiteScrollActive = false,
+  clickable,
 }: {
   post: {
     user_id: number;
@@ -40,6 +41,7 @@ export default function Post({
   author: any;
   city: string;
   isSiteScrollActive?: boolean;
+  clickable: boolean;
 }) {
   const { post_id, body, img_url, created_at, user_id } = post;
   const [sitePostIds, setSitePostIds] = useState<Array<number>>([]);
@@ -106,8 +108,8 @@ export default function Post({
         onPress={() => {
           router.push(`/post/${post_id}`);
         }}
+        disabled={!clickable}
       >
-        {" "}
         <View style={{ position: "relative" }}>
           <Image source={{ uri: img_url }} style={styles.image} />
           {isSiteScrollActive && Number.isInteger(postIndex) ? (

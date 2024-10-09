@@ -164,6 +164,7 @@ export default function ViewPost() {
               author={author}
               city={city}
               isSiteScrollActive={true}
+              clickable={false}
             />
           ) : (
             <ActivityIndicator size={52} color={"#DD614A"} />
