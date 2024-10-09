@@ -145,7 +145,12 @@ export default function ViewPost() {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {post ? (
-            <Post post={post} author={author} city={city} />
+            <Post
+              post={post}
+              author={author}
+              city={city}
+              isSiteScrollActive={true}
+            />
           ) : (
             <ActivityIndicator size={52} color={"#DD614A"} />
           )}

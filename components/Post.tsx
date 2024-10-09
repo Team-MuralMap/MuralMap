@@ -1,8 +1,16 @@
-import React from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { convertDateShort } from "../client/utils";
-import { useRouter } from "expo-router";
+import { router, useFocusEffect, useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fetchPosts, fetchSites } from "@/client/client.mjs";
 
 // Custom function to format the date
 const formatDate = (timestamp: string) => {
@@ -19,6 +27,7 @@ export default function Post({
   post,
   author,
   city,
+  isSiteScrollActive = false,
 }: {
   post: {
     user_id: number;
@@ -30,8 +39,39 @@ export default function Post({
   };
   author: any;
   city: string;
+  isSiteScrollActive?: boolean;
 }) {
   const { body, img_url, created_at } = post;
+  const [sitePostIds, setSitePostIds] = useState<Array<number>>([]);
+  const [isSitePostsLoading, setIsSitePostsLoading] = useState(true);
+  const [postIndex, setPostIndex] = useState<number | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isSiteScrollActive) {
+        setIsSitePostsLoading(true);
+        fetchPosts({
+          site_id: post.site_id,
+          sort_by: "created_at",
+          order: "asc",
+        })
+          .then(({ posts }) => {
+            const IDs = posts.map(
+              ({ post_id }: { post_id: number }) => post_id
+            );
+            setSitePostIds(IDs);
+            setPostIndex(IDs.indexOf(post.post_id));
+            console.log("ids:", IDs);
+            console.log("looking for id:", post.post_id);
+            console.log("currIndex:", IDs.indexOf(post.post_id));
+            setIsSitePostsLoading(false);
+          })
+          .catch((err) =>
+            console.error("Failed to load other posts in site:", err)
+          );
+      }
+    }, [post.post_id])
+  );
 
   return (
     <>
@@ -40,6 +80,7 @@ export default function Post({
           source={author ? { uri: author.avatar_url } : {}}
           style={styles.avatar}
         />
+
         <View style={styles.textContainer}>
           <Text style={styles.username}>
             {author ? author.username : "loading..."}
@@ -56,8 +97,36 @@ export default function Post({
           ) : null}
         </View>
       </View>
-
-      <Image source={{ uri: img_url }} style={styles.image} />
+      <View style={{ position: "relative" }}>
+        <Image source={{ uri: img_url }} style={styles.image} />
+        {isSiteScrollActive && Number.isInteger(postIndex) ? (
+          <>
+            {postIndex! > 0 ? (
+              <TouchableOpacity
+                style={{
+                  ...styles.seePostButton,
+                  ...styles.previousPostButton,
+                }}
+                onPress={() => {
+                  router.push(`/post/${sitePostIds[postIndex! - 1]}`);
+                }}
+              >
+                <Text style={styles.seePostText}>Previous</Text>
+              </TouchableOpacity>
+            ) : null}
+            {postIndex! < sitePostIds.length - 1 && postIndex! >= 0 ? (
+              <TouchableOpacity
+                style={{ ...styles.seePostButton, ...styles.nextPostButton }}
+                onPress={() => {
+                  router.push(`/post/${sitePostIds[postIndex! + 1]}`);
+                }}
+              >
+                <Text style={styles.seePostText}>Next</Text>
+              </TouchableOpacity>
+            ) : null}
+          </>
+        ) : null}
+      </View>
       <Text style={styles.body}> {body}</Text>
       <Text style={styles.postTime}>{formatDate(created_at)}</Text>
     </>
@@ -83,7 +152,7 @@ const styles = StyleSheet.create({
     position: "relative",
     left: 0,
     top: 0,
-    backgroundColor: "grey",
+    backgroundColor: "#888888",
   },
   textContainer: {
     position: "absolute",
@@ -110,8 +179,33 @@ const styles = StyleSheet.create({
     color: "#888888",
     paddingLeft: 20,
   },
-  cityContainer: { flex: 1, flexDirection: "row" },
+  cityContainer: {
+    flex: 1,
+    flexDirection: "row",
+  },
   locationIcon: {
     marginRight: 3,
+  },
+  seePostButton: {
+    width: 70,
+    height: 50,
+    backgroundColor: "#DD614Aaa",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: screenWidth / 2 - 25,
+  },
+  nextPostButton: {
+    right: 0,
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+  },
+  previousPostButton: {
+    left: 0,
+    borderTopRightRadius: 50,
+    borderBottomRightRadius: 50,
+  },
+  seePostText: {
+    // color: "#DD614A",
   },
 });
