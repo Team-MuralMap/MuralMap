@@ -68,7 +68,7 @@ const UserPhotos: React.FC<UserPhotosProps> = ({ user_id }) => {
     <View style={styles.container}>
       <FlatList
         data={photos}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.post_id}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
