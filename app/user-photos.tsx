@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,19 +9,21 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import axios from "axios";
 import { fetchPosts } from "@/client/client.mjs";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
-const UserPhotos: React.FC = () => {
+interface UserPhotosProps {
+  user_id: string;
+}
+
+const UserPhotos: React.FC<UserPhotosProps> = ({ user_id }) => {
   const [photos, setPhotos] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Fetch the photos for the user with ID 1
-
-    fetchPosts({ user_id: 1 })
+  const loadPosts = async () => {
+    setLoading(true);
+    fetchPosts({ user_id: user_id })
       .then(({ posts }) => {
         const sortedPosts = posts.sort(
           (a: any, b: any) =>
@@ -34,7 +36,17 @@ const UserPhotos: React.FC = () => {
         setError("Failed to fetch photos");
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadPosts();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadPosts();
+    }, [user_id])
+  );
 
   if (loading) {
     return (
@@ -60,8 +72,10 @@ const UserPhotos: React.FC = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
-              console.log(item.post_id);
-              router.push(`post/${item.post_id}`);
+              router.push({
+                pathname: "/post/[post_id]",
+                params: { post_id: item.post_id },
+              });
             }}
           >
             <Image src={item.img_url} style={styles.photo} />

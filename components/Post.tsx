@@ -41,7 +41,7 @@ export default function Post({
   city: string;
   isSiteScrollActive?: boolean;
 }) {
-  const { body, img_url, created_at } = post;
+  const { post_id, body, img_url, created_at, user_id } = post;
   const [sitePostIds, setSitePostIds] = useState<Array<number>>([]);
   const [isSitePostsLoading, setIsSitePostsLoading] = useState(true);
   const [postIndex, setPostIndex] = useState<number | null>(null);
@@ -70,72 +70,87 @@ export default function Post({
     }, [post.post_id])
   );
 
+  const router = useRouter();
+
   return (
     <>
-      <View style={styles.userContainer}>
-        <Image
-          source={author ? { uri: author.avatar_url } : {}}
-          style={styles.avatar}
-        />
+      <TouchableOpacity
+        onPress={() => {
+          router.push(`/profile?user_id=${user_id}`);
+        }}
+      >
+        <View style={styles.userContainer}>
+          <Image
+            source={author ? { uri: author.avatar_url } : {}}
+            style={styles.avatar}
+          />
 
-        <View style={styles.textContainer}>
-          <Text style={styles.username}>
-            {author ? author.username : "loading..."}
-          </Text>
-          {city ? (
-            <View style={styles.cityContainer}>
-              <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={screenWidth / 24}
-                style={styles.locationIcon}
-              />
-              <Text style={styles.city}>{city}</Text>
-            </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.username}>
+              {author ? author.username : "loading..."}
+            </Text>
+            {city ? (
+              <View style={styles.cityContainer}>
+                <MaterialCommunityIcons
+                  name="map-marker-outline"
+                  size={screenWidth / 24}
+                  style={styles.locationIcon}
+                />
+                <Text style={styles.city}>{city}</Text>
+              </View>
+            ) : null}
+          </View>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          router.push(`/post/${post_id}`);
+        }}
+      >
+        {" "}
+        <View style={{ position: "relative" }}>
+          <Image source={{ uri: img_url }} style={styles.image} />
+          {isSiteScrollActive && Number.isInteger(postIndex) ? (
+            <>
+              {postIndex! > 0 ? (
+                <TouchableOpacity
+                  style={{
+                    ...styles.seePostButton,
+                    ...styles.previousPostButton,
+                  }}
+                  onPress={() => {
+                    router.push(`/post/${sitePostIds[postIndex! - 1]}`);
+                  }}
+                >
+                  <Ionicons
+                    style={styles.seePostIcon}
+                    name={"chevron-back"}
+                    size={32}
+                    color={"white"}
+                  />
+                </TouchableOpacity>
+              ) : null}
+              {postIndex! < sitePostIds.length - 1 && postIndex! >= 0 ? (
+                <TouchableOpacity
+                  style={{ ...styles.seePostButton, ...styles.nextPostButton }}
+                  onPress={() => {
+                    router.push(`/post/${sitePostIds[postIndex! + 1]}`);
+                  }}
+                >
+                  <Ionicons
+                    style={styles.seePostIcon}
+                    name={"chevron-forward"}
+                    size={32}
+                    color={"white"}
+                  />
+                </TouchableOpacity>
+              ) : null}
+            </>
           ) : null}
         </View>
-      </View>
-      <View style={{ position: "relative" }}>
-        <Image source={{ uri: img_url }} style={styles.image} />
-        {isSiteScrollActive && Number.isInteger(postIndex) ? (
-          <>
-            {postIndex! > 0 ? (
-              <TouchableOpacity
-                style={{
-                  ...styles.seePostButton,
-                  ...styles.previousPostButton,
-                }}
-                onPress={() => {
-                  router.push(`/post/${sitePostIds[postIndex! - 1]}`);
-                }}
-              >
-                <Ionicons
-                  style={styles.seePostIcon}
-                  name={"chevron-back"}
-                  size={32}
-                  color={"white"}
-                />
-              </TouchableOpacity>
-            ) : null}
-            {postIndex! < sitePostIds.length - 1 && postIndex! >= 0 ? (
-              <TouchableOpacity
-                style={{ ...styles.seePostButton, ...styles.nextPostButton }}
-                onPress={() => {
-                  router.push(`/post/${sitePostIds[postIndex! + 1]}`);
-                }}
-              >
-                <Ionicons
-                  style={styles.seePostIcon}
-                  name={"chevron-forward"}
-                  size={32}
-                  color={"white"}
-                />
-              </TouchableOpacity>
-            ) : null}
-          </>
-        ) : null}
-      </View>
-      <Text style={styles.body}> {body}</Text>
-      <Text style={styles.postTime}>{formatDate(created_at)}</Text>
+        <Text style={styles.body}> {body}</Text>
+        <Text style={styles.postTime}>{formatDate(created_at)}</Text>
+      </TouchableOpacity>
     </>
   );
 }
