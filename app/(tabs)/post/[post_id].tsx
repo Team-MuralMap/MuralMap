@@ -1,6 +1,6 @@
 import { useFocusEffect, useGlobalSearchParams, useRouter } from "expo-router";
 import CommentsSection from "../../../components/CommentsSection";
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useContext, useCallback, SetStateAction } from "react";
 import {
   addComment,
   deletePostByPostId,
@@ -25,7 +25,6 @@ import {
   Dimensions,
 } from "react-native";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Post from "@/components/Post";
 
 export default function ViewPost() {
@@ -37,13 +36,15 @@ export default function ViewPost() {
     created_at: string;
     post_id: number;
     site_id: number;
+    likes_count: number;
   } | null>(null);
   const [author, setAuthor] = useState<any>(null);
   const [city, setCity] = useState("");
   const [comments, SetComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [commentAuthors, setCommentAuthors] = useState([]);
-  const [newComment, setNewComment] = useState(""); // New comment state
+  const [newComment, setNewComment] = useState("");
+
   const post_id = Number(
     useGlobalSearchParams<{
       post_id: string;
