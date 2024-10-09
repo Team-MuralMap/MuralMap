@@ -134,7 +134,7 @@ export default function createPost() {
         </TouchableOpacity>
       </View>
       {/* DEV BUTTON */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.button}
         onPress={() =>
           goToPublishPhoto(
@@ -143,7 +143,7 @@ export default function createPost() {
         }
       >
         <Text>Dev</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* DEV BUTTON END */}
     </View>
   );

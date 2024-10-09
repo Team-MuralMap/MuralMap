@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#cccccc",
   },
   row: {
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
 });
 
