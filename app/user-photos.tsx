@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   row: {
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
 });
 
