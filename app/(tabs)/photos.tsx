@@ -37,7 +37,7 @@ export default function Photos() {
         fetchUsers(),
       ]);
 
-      setPosts(posts);
+      setPosts(posts.slice(0, 15));
       setUsers(users);
       setIsPostsLoading(false);
       setIsUsersLoading(false);
