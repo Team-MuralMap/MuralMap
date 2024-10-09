@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { convertDateShort } from "../client/utils";
 import { router, useFocusEffect, useRouter } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { fetchPosts, fetchSites } from "@/client/client.mjs";
 
 // Custom function to format the date
@@ -61,9 +61,6 @@ export default function Post({
             );
             setSitePostIds(IDs);
             setPostIndex(IDs.indexOf(post.post_id));
-            console.log("ids:", IDs);
-            console.log("looking for id:", post.post_id);
-            console.log("currIndex:", IDs.indexOf(post.post_id));
             setIsSitePostsLoading(false);
           })
           .catch((err) =>
@@ -111,7 +108,12 @@ export default function Post({
                   router.push(`/post/${sitePostIds[postIndex! - 1]}`);
                 }}
               >
-                <Text style={styles.seePostText}>Previous</Text>
+                <Ionicons
+                  style={styles.seePostIcon}
+                  name={"chevron-back"}
+                  size={32}
+                  color={"white"}
+                />
               </TouchableOpacity>
             ) : null}
             {postIndex! < sitePostIds.length - 1 && postIndex! >= 0 ? (
@@ -121,7 +123,12 @@ export default function Post({
                   router.push(`/post/${sitePostIds[postIndex! + 1]}`);
                 }}
               >
-                <Text style={styles.seePostText}>Next</Text>
+                <Ionicons
+                  style={styles.seePostIcon}
+                  name={"chevron-forward"}
+                  size={32}
+                  color={"white"}
+                />
               </TouchableOpacity>
             ) : null}
           </>
@@ -187,25 +194,27 @@ const styles = StyleSheet.create({
     marginRight: 3,
   },
   seePostButton: {
-    width: 70,
+    width: 40,
     height: 50,
-    backgroundColor: "#DD614Aaa",
+    backgroundColor: "#222222bb",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
     bottom: screenWidth / 2 - 25,
   },
+  seePostIcon: {
+    // color: "#DD614A",
+  },
   nextPostButton: {
     right: 0,
     borderTopLeftRadius: 50,
     borderBottomLeftRadius: 50,
+    paddingLeft: 10,
   },
   previousPostButton: {
     left: 0,
     borderTopRightRadius: 50,
     borderBottomRightRadius: 50,
-  },
-  seePostText: {
-    // color: "#DD614A",
+    paddingRight: 10,
   },
 });
