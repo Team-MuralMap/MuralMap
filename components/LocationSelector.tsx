@@ -42,6 +42,13 @@ export default function LocationSelector({
   >([]);
   const [isSitesLoading, setIsSitesLoading] = useState(true);
 
+  const defaultInitalRegion = {
+    latitude: 53.452362850876106,
+    latitudeDelta: 0.27733357257162083,
+    longitude: -2.255229167640209,
+    longitudeDelta: 0.2548038214445114,
+  };
+
   useEffect(() => {
     setIsSitesLoading(true);
     fetchSites()
@@ -113,10 +120,10 @@ export default function LocationSelector({
                 ? {
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
-                    latitudeDelta: 1,
-                    longitudeDelta: 2,
+                    latitudeDelta: 0.1,
+                    longitudeDelta: 0.1,
                   }
-                : undefined
+                : defaultInitalRegion
             }
             followsUserLocation={true}
             showsUserLocation={true}
@@ -138,7 +145,7 @@ export default function LocationSelector({
                     setSelectedSite(site_id);
                     setTimeout(function (this: any) {
                       this[`markerRef${site_id}`].showCallout();
-                    }, 100);
+                    }, 300);
                   }}
                   pinColor={
                     site_id === selectedSite
@@ -190,10 +197,10 @@ export default function LocationSelector({
               ? {
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
-                  latitudeDelta: 1,
-                  longitudeDelta: 2,
+                  latitudeDelta: 0.1,
+                  longitudeDelta: 0.1,
                 }
-              : undefined
+              : defaultInitalRegion
           }
         >
           {regionCoordinates ? (

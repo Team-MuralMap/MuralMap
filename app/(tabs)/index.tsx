@@ -53,6 +53,13 @@ export default function Index() {
     });
   }, []);
 
+  const initalRegion = {
+    latitude: 53.452362850876106,
+    latitudeDelta: 0.27733357257162083,
+    longitude: -2.255229167640209,
+    longitudeDelta: 0.2548038214445114,
+  };
+
   if (Platform.OS === "android" || Platform.OS === "ios") {
     return (
       <View
@@ -67,9 +74,9 @@ export default function Index() {
           onPress={(e) => {
             Location.getCurrentPositionAsync({}).then((location) => {
               setLocation(location);
-              console.log("Current location:", location);
             });
           }}
+          initialRegion={initalRegion}
           style={styles.map}
         >
           {sites.map(
