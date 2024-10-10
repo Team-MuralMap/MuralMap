@@ -37,18 +37,29 @@ export default function Post({
     post_id: number;
     site_id: number;
     likes_count: number;
+    visits_count: number;
   };
   author: any;
   city: string;
   isSiteScrollActive?: boolean;
   clickable: boolean;
 }) {
-  const { post_id, body, img_url, created_at, user_id, likes_count } = post;
+  const {
+    post_id,
+    body,
+    img_url,
+    created_at,
+    user_id,
+    likes_count,
+    visits_count,
+  } = post;
   const [sitePostIds, setSitePostIds] = useState<Array<number>>([]);
   const [isSitePostsLoading, setIsSitePostsLoading] = useState(true);
   const [postIndex, setPostIndex] = useState<number | null>(null);
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState<number>(Number(likes_count));
+  const [visited, setVisited] = useState(false);
+  const [visits, setVisits] = useState<number>(Number(visits_count));
 
   useFocusEffect(
     useCallback(() => {
@@ -81,6 +92,10 @@ export default function Post({
     setLikes(liked ? likes - 1 : likes + 1);
   };
 
+  const handleVisitPress = () => {
+    setVisited(!visited);
+    setVisits(visited ? visits - 1 : visits + 1);
+  };
   return (
     <>
       <TouchableOpacity
@@ -159,19 +174,27 @@ export default function Post({
         </View>
         <View style={styles.bodyContainer}>
           <Text style={styles.body}> {body}</Text>
-          <View style={styles.likesContainer}>
-            <Text style={styles.likesCount}>
-              {likes} {likes.toString() === "1" ? "like" : "likes"}
+        </View>
+        <View style={styles.likesContainer}>
+          <Text style={styles.likesCount}>
+            {likes} {likes.toString() === "1" ? "like" : "likes"}
+          </Text>
+          <TouchableOpacity onPress={handleLikePress} style={styles.likeButton}>
+            <Text style={styles.likeButtonText}>
+              {liked ? "Liked" : "Like"}
             </Text>
-            <TouchableOpacity
-              onPress={handleLikePress}
-              style={styles.likeButton}
-            >
-              <Text style={styles.likeButtonText}>
-                {liked ? "Liked" : "Like"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
+          <Text style={styles.likesCount}>
+            {visits} {visits.toString() === "1" ? "visit" : "visits"}
+          </Text>
+          <TouchableOpacity
+            onPress={handleVisitPress}
+            style={styles.likeButton}
+          >
+            <Text style={styles.likeButtonText}>
+              {visited ? "Visited" : "Visit"}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.postTime}>{formatDate(created_at)}</Text>
@@ -218,10 +241,11 @@ const styles = StyleSheet.create({
     fontSize: screenWidth / 32,
   },
   bodyContainer: {
-    padding: 20,
-    flexDirection: "row",
+    paddingLeft: 15,
+    paddingTop: 6,
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
+    //alignItems: "center",
   },
   body: {
     fontSize: 16,
@@ -230,11 +254,14 @@ const styles = StyleSheet.create({
   likesContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
+    paddingRight: 15,
   },
   likesCount: {
     fontSize: 14,
     color: "#DD614A",
-    marginRight: 10,
+    marginRight: 2,
+    marginLeft: 5,
   },
   likeButton: {
     padding: 5,

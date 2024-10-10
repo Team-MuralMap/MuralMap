@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,19 @@ import {
 } from "react-native";
 
 export default function CommentsSection({ comments, commentAuthors }: any) {
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState<number>(Number(comments.likes_count));
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleString();
   };
 
   const router = useRouter();
+
+  const handleLikePress = () => {
+    setLiked(!liked);
+    setLikes(liked ? likes - 1 : likes + 1);
+  };
 
   return (
     <View style={styles.container}>
@@ -44,6 +51,22 @@ export default function CommentsSection({ comments, commentAuthors }: any) {
                 </TouchableOpacity>
               )}
               <Text style={styles.commentBody}>{comment.body}</Text>
+
+              <View style={styles.likesContainer}>
+                <Text style={styles.likesCount}>
+                  {comment.likes_count}{" "}
+                  {comment.likes_count.toString() === "1" ? "like" : "likes"}
+                </Text>
+                <TouchableOpacity
+                  onPress={handleLikePress}
+                  style={styles.likeButton}
+                >
+                  <Text style={styles.likeButtonText}>
+                    {liked ? "Liked" : "Like"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
               <Text style={styles.commentTime}>
                 {formatDate(comment.created_at)}
               </Text>
@@ -59,6 +82,24 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     paddingTop: 10,
+  },
+  likesContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  likesCount: {
+    fontSize: 12,
+    color: "#DD614A",
+    marginRight: 2,
+  },
+  likeButton: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: "#DD614A",
+  },
+  likeButtonText: {
+    fontSize: 12,
+    color: "white",
   },
   commentContainer: {
     marginBottom: 10,

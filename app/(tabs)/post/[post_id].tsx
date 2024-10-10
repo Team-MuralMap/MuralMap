@@ -1,6 +1,12 @@
 import { useFocusEffect, useGlobalSearchParams, useRouter } from "expo-router";
 import CommentsSection from "../../../components/CommentsSection";
-import { useState, useEffect, useContext, useCallback, SetStateAction } from "react";
+import {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  SetStateAction,
+} from "react";
 import {
   addComment,
   deletePostByPostId,
@@ -37,6 +43,7 @@ export default function ViewPost() {
     post_id: number;
     site_id: number;
     likes_count: number;
+    visits_count: number;
   } | null>(null);
   const [author, setAuthor] = useState<any>(null);
   const [city, setCity] = useState("");

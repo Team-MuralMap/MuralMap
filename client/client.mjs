@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const defaultCatch = (err) => {
-  console.log(err.response.data);
+  console.log(err, " <<-- error here");
+  //console.log(err.response.data, " <<-- error data");
 };
 
 const apiClient = axios.create({
