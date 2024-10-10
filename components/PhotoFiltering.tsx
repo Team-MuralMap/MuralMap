@@ -20,7 +20,7 @@ export function PhotoFilters({ setSortQuery, sortQuery }: any) {
   ];
 
   return (
-    <Collapsible title="Filters & Sorting..." extraStyle={styles.filtering}>
+    <Collapsible title="Options" extraStyle={styles.filtering}>
       <SelectDropdown
         data={sortingOptions}
         onSelect={({ sort_by, order }) => {
