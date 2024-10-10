@@ -151,6 +151,7 @@ export default function publishPhoto() {
                     uploadPhoto();
                   } else {
                     // setErrorMsg("Please choose a location and caption");
+                    console.log("Please choose a location and caption");
                   }
                 }}
               >
