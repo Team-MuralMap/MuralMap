@@ -94,13 +94,12 @@ export default function Index() {
                     />
                   </Callout>
                 </Marker>
-              ) : (
-                <Marker
-                  pinColor={"blue"}
-                  coordinate={{ latitude, longitude }}
-                  key={site_id}
-                ></Marker>
-              )
+              ) : null
+              // <Marker
+              //   pinColor={"blue"}
+              //   coordinate={{ latitude, longitude }}
+              //   key={site_id}
+              // ></Marker>
           )}
         </MapView>
       </View>
