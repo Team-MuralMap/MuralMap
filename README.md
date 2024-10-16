@@ -2,6 +2,9 @@
 
 This is an Expo-based mobile application that allows users to share photos and locations of public art. Users can upload photos of murals, sculptures, and other forms of public art, along with information about their location, making it easy for others to discover art in their area.
 
+## Video Demo
+https://www.youtube.com/watch?v=ccsnACpBTUo&ab_channel=MuralMap
+
 ## Features
 
 **Photo Sharing:** Upload and share photos of public art in your surroundings.
